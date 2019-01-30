@@ -22,8 +22,11 @@ QVariant MapModel::data(const QModelIndex& index, int role) const {
 	if (index.row() < 0 || index.row() >= map->count() || role != Qt::DisplayRole)
 		return QVariant();
 	
-	if (index.column() == 0)
-		return map->keys().at(index.row());
+	if (index.column() == 0) {
+		QDateTime timestamp;
+		timestamp.setTime_t(map->keys().at(index.row()));
+		return timestamp.toString(Qt::SystemLocaleShortDate);
+	}
 	
 	if (index.column() == 1) {
 		return map->values().at(index.row());

@@ -62,8 +62,8 @@ void Clip::setPixmap(const QPixmap& pixmap) {
 
 /* GETTER & SETTER */
 
-QMap<uint, QVariant> Clip::getHistory() const {
-	return history;
+QMap<uint, QVariant>* Clip::getHistory() {
+	return &history;
 }
 
 void Clip::setHistory(const QMap<uint, QVariant>& value) {
@@ -82,13 +82,6 @@ void Clip::onDataChanged() {
 	const QMimeData* data = clipboard->mimeData();
 	emit dataChanged(data);
 	
-	if (data->hasText()) {
-		history.insert(index, data->text());
-		emit textReceived(data->text());
-#ifdef QT_DEBUG
-		cout << "Clip> Received text = \"" + data->text().toStdString() + "\"" << endl;
-#endif
-	}
 	if (data->hasHtml()) {
 		history.insert(index, data->html());
 		emit htmlReceived(data->html());
@@ -96,7 +89,7 @@ void Clip::onDataChanged() {
 		cout << "Clip> Received html = \"" + data->html().toStdString() + "\"" << endl;
 #endif
 	}
-	if (data->hasUrls()) {
+	else if (data->hasUrls()) {
 		QString urls = "";
 		for (int i = 0, max = data->urls().count() ; i < max ; i++) {
 			urls += data->urls().at(i).toString();
@@ -109,7 +102,7 @@ void Clip::onDataChanged() {
 		cout << "Clip> Received urls = \"" + urls.toStdString() + "\"" << endl;
 #endif
 	}
-	if (data->hasColor()) {
+	else if (data->hasColor()) {
 		QColor color = data->colorData().value<QColor>();
 		emit colorReceived(color);
 		history.insert(index, color);
@@ -117,7 +110,14 @@ void Clip::onDataChanged() {
 		cout << "Clip> Received color = \"" + color.name().toStdString() + "\"" << endl;
 #endif
 	}
-	if (data->hasImage()) {
+	else if (data->hasText()) {
+		history.insert(index, data->text());
+		emit textReceived(data->text());
+#ifdef QT_DEBUG
+		cout << "Clip> Received text = \"" + data->text().toStdString() + "\"" << endl;
+#endif
+	}
+	else if (data->hasImage()) {
 		QImage image = data->colorData().value<QImage>();
 		history.insert(index, image);
 		emit imageReceived(image);

@@ -28,14 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     p.cpp \
-    r.cpp \
+#    r.cpp \
     clip.cpp \
     mapmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     p.h \
-    r.h \
+#    r.h \
     clip.h \
     mapmodel.h
 
@@ -48,4 +48,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    .gitignore
+    .gitignore \
+    doxy.conf

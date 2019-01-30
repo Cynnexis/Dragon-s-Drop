@@ -42,7 +42,7 @@ public:
 	
 	/* GETTER & SETTERS */
 	
-	QMap<uint, QVariant> getHistory() const;
+	QMap<uint, QVariant>* getHistory();
 	void setHistory(const QMap<uint, QVariant>& value);
 	
 signals:
