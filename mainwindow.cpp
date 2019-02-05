@@ -47,6 +47,15 @@ void MainWindow::addHistoryRow(QString key, QString value) {
 	ui->tw_history->setRowCount(ui->tw_history->rowCount()+1);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 0, k);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 1, v);
+	if (QColor::isValidColor(value)) {
+		QColor background = QColor(value);
+		QFont consolas = QFont("Consolas");
+		consolas.setBold(true);
+		v->setFont(consolas);
+		v->setBackgroundColor(background);
+		if (background.lightness() < 180)
+			v->setForeground(QBrush(QColor(255, 255, 255)));
+	}
 }
 
 void MainWindow::addHistoryRow(QString value) {
@@ -113,7 +122,7 @@ void MainWindow::actionCopyUrl_triggered() {
 }
 
 void MainWindow::actionCopyColor_triggered() {
-	data.setData("text/plain", QString("#ffffff").toUtf8());
+	data.setText("#ffffff");
 	clip->setMimeType(&data);
 }
 

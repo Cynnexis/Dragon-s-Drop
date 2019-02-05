@@ -110,6 +110,14 @@ void Clip::onDataChanged() {
 		cout << "Clip> Received color = \"" + color.name().toStdString() + "\"" << endl;
 #endif
 	}
+	else if (QColor::isValidColor(data->text())) {
+		QColor color = QColor(data->text());
+		emit colorReceived(color);
+		history.insert(index, color);
+#ifdef QT_DEBUG
+		cout << "Clip> Received color = \"" + color.name().toStdString() + "\"" << endl;
+#endif
+	}
 	else if (data->hasText()) {
 		history.insert(index, data->text());
 		emit textReceived(data->text());
