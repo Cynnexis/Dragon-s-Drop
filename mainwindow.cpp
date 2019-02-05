@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(actionCopyHtml, SIGNAL(triggered()), this, SLOT(actionCopyHtml_triggered()));
 	connect(actionCopyUrl, SIGNAL(triggered()), this, SLOT(actionCopyUrl_triggered()));
 	connect(actionCopyColor, SIGNAL(triggered()), this, SLOT(actionCopyColor_triggered()));
+	connect(actionCopyImage, SIGNAL(triggered()), this, SLOT(actionCopyImage_triggered()));
 	
 	ui->menuBar->addMenu(mDebug);
 #endif
@@ -41,24 +42,51 @@ MainWindow::~MainWindow() {
 	delete ui;
 }
 
-void MainWindow::addHistoryRow(QString key, QString value) {
+void MainWindow::addHistoryRow(QString key, std::function<void(QTableWidgetItem*)> applyValue) {
 	QTableWidgetItem* k = new QTableWidgetItem(key);
-	QTableWidgetItem* v = new QTableWidgetItem(value);
+	QTableWidgetItem* v = new QTableWidgetItem();
+	applyValue(v);
+	cout << "MainWindow::addHistoryRow(QString, std::function)> Applying QTableWidgetItems" << endl;
 	ui->tw_history->setRowCount(ui->tw_history->rowCount()+1);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 0, k);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 1, v);
-	if (QColor::isValidColor(value)) {
-		QColor background = QColor(value);
-		QFont consolas = QFont("Consolas");
-		consolas.setBold(true);
-		v->setFont(consolas);
-		v->setBackgroundColor(background);
-		if (background.lightness() < 180)
-			v->setForeground(QBrush(QColor(255, 255, 255)));
-	}
 }
 
+void MainWindow::addHistoryRow(QString key, QString value) {
+	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
+		v->setText(value);
+		cout << "MainWindow::addHistoryRow(QString, QString)> Applying QString" << endl;
+	});
+}
 void MainWindow::addHistoryRow(QString value) {
+	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
+}
+
+void MainWindow::addHistoryRow(QString key, QColor value) {
+	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
+		/*QFont consolas = QFont("Consolas");
+		consolas.setBold(true);
+		v->setFont(consolas);*/
+		v->setBackgroundColor(value);
+		if (value.lightness() < 180)
+			v->setForeground(QBrush(Qt::white));
+		cout << "MainWindow::addHistoryRow(QString, QColor)> Applying QColor" << endl;
+	});
+}
+
+void MainWindow::addHistoryRow(QColor value) {
+	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
+}
+
+void MainWindow::addHistoryRow(QString key, QImage value) {
+	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
+		//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
+		v->setData(Qt::DecorationRole, QPixmap::fromImage(value));
+		cout << "MainWindow::addHistoryRow(QString, QImage)> Applying QImage" << endl;
+	});
+}
+
+void MainWindow::addHistoryRow(QImage value) {
 	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
 }
 
@@ -93,14 +121,15 @@ void MainWindow::onUrlsReceived(QList<QUrl> urls) {
 }
 
 void MainWindow::onColorReceived(QColor color) {
-	addHistoryRow(color.name());
+	addHistoryRow(color);
 #ifdef QT_DEBUG
 	cout << "MainWindow> Color received" << endl;
 #endif
 }
 
 void MainWindow::onImageReceived(QImage image) {
-	addHistoryRow("(" + QString::number(image.size().width()) + "x" + QString::number(image.size().height()) + ")");
+	//addHistoryRow("(" + QString::number(image.rect().width()) + "x" + QString::number(image.rect().height()) + ")");
+	addHistoryRow(image);
 #ifdef QT_DEBUG
 	cout << "MainWindow> Image received" << endl;
 #endif
@@ -122,12 +151,18 @@ void MainWindow::actionCopyUrl_triggered() {
 }
 
 void MainWindow::actionCopyColor_triggered() {
-	data.setText("#ffffff");
+	data.setText("#3e85cf");
 	clip->setMimeType(&data);
 }
 
 void MainWindow::actionCopyImage_triggered() {
-	data.setData("image/png", QString("").toUtf8());
+	QImage image = QImage(100, 50, QImage::Format_ARGB32_Premultiplied);
+	QPainter painter(&image);
+	painter.fillRect(image.rect(), Qt::white);
+	painter.drawText(image.rect(), Qt::AlignCenter | Qt::AlignVCenter, "Hello world!");
+	image.save("image.png");
+	data.setImageData(image);
 	clip->setMimeType(&data);
+	cout << "MainWindow::actionCopyImage_triggered> Image saved" << endl;
 }
 #endif
