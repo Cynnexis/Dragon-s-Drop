@@ -49,4 +49,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     .gitignore \
-    doxy.conf
+    doxy.conf \
+    README.md \
+    LICENSE.txt

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="20"
+   height="20"
+   viewBox="0 0 5.2916665 5.2916668"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="dragonsdrop.svg"
+   inkscape:export-filename="C:\Users\Valentin\Documents\QtProjects\DragonsDrop\res\dragonsdrop16.png"
+   inkscape:export-xdpi="76.800003"
+   inkscape:export-ydpi="76.800003">
+  <title
+     id="title817">Dragon's Drop Logo</title>
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="32"
+     inkscape:cx="7.0693895"
+     inkscape:cy="10.623186"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-text-baseline="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Dragon's Drop Logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-291.70832)">
+    <path
+       style="fill:#c22f32;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.09999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 13.916016,0.7890625 C 12.560076,2.6122688 12.235543,4.5635556 12.216797,6.6152344 10.057175,6.6621383 8.7578837,7.2248681 7.1347656,7.59375 6.8928963,7.5593563 6.7352273,7.5192601 6.5644531,7.4179688 6.1806145,7.1589955 4.9191764,8.2854086 4.5117188,8.2871094 4.3124432,8.5109708 4.2420052,8.7531969 4.1777344,9 4.1372897,9.1553386 4.2929688,9.2675781 4.2929688,9.2675781 4.2987405,9.703471 3.2799467,9.8764458 1.7597656,10.392578 1.3396265,10.535217 1.3878441,9.7084055 1.421875,9.3125 1.0429604,9.7983205 1.0562244,10.468167 1.0410156,10.71875 c -0.021536,0.354935 -0.00465,0.370387 0.1386719,0.628906 L 4.3085938,10.75 c 1.3832934,-0.309619 3.597179,-0.711679 3.1386718,-1.7382812 0,0 3.2827844,-1.0889625 5.1816404,-0.7597657 3.584162,0.6213922 3.588366,4.3675249 1.75586,6.9511719 -0.644402,1.104752 -2.564178,2.210492 -4.9863285,1.720703 C 7.7970842,16.649548 6.5708843,15.354302 6.8496094,13.314453 7.1717476,10.956746 10.935894,9.458483 13.689453,11.005859 11.293554,8.7627854 6.2772804,9.9337113 5.96875,13.355469 5.7389464,15.90408 6.7910342,18.150186 9.9160156,18.400391 12.320766,18.593033 14.518891,17.75558 15.943359,15.808594 17.2429,14.032329 17.558831,11.262576 16.792969,9.1992188 16.328187,7.9470235 14.270174,6.8433344 13.072266,6.6445312 c -0.153359,-1.3043149 0.0044,-2.7686173 0.80664,-4.4667968 2.193323,1.6019149 2.376022,3.4559053 2.890625,4.6992187 -0.0437,-0.00873 0.133502,-3.2550598 -2.107422,-5.0917969 2.342153,0.5406615 3.164003,2.1320841 5.179688,4.1445313 -1.46231,-2.7649134 -2.918511,-4.3797683 -5.925781,-5.140625 z M 5.7583103,8.1914063 C 5.6152441,8.4153646 5.639685,8.5690104 5.4199219,8.7929687 L 4.9160156,9.0507812 C 5.0133521,8.4998398 5.4068011,8.612982 5.7583103,8.1914063 Z"
+       transform="matrix(0.26458333,0,0,0.26458333,0,291.70832)"
+       id="path819"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccccccccsccscccccccccc" />
+    <path
+       style="fill:#c22f34;fill-rule:evenodd;stroke:none;stroke-width:0.02645833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 1.3288225,293.78719 0.1726166,-0.11284 c 0.073999,-0.18614 0.3393782,-0.33377 0.4262005,-0.63286 -0.2170177,0.3498 -0.4150271,0.41447 -0.5988171,0.7457 z"
+       id="path821"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path823"
+       d="m 1.5768694,293.6484 c 0.06246,-0.03 0.1131091,-0.0585 0.1755695,-0.0272 0.1032316,-0.16108 0.2828526,-0.25776 0.4490206,-0.67378 -0.329626,0.49653 -0.511678,0.48631 -0.6245901,0.70099 z"
+       style="fill:#c22f34;fill-rule:evenodd;stroke:none;stroke-width:0.02645833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" />
+    <path
+       style="fill:#c22f34;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1.9223633,293.68384 c 0.068902,-0.0256 0.1378038,-0.0472 0.2067057,-0.0591 -0.019323,-0.0712 0.073546,-0.10989 0.1122115,-0.22738 -0.1323923,0.14315 -0.2740586,0.17178 -0.3189172,0.28648 z"
+       id="path825"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path827"
+       d="m 2.1503776,293.61953 c 0.056684,-0.0195 0.1237991,-0.0329 0.2183987,-0.0576 0.00991,-0.0668 0.1071635,-0.088 0.1355976,-0.19668 -0.1601632,0.14461 -0.2784435,0.14839 -0.3539963,0.25432 z"
+       style="fill:#c22f34;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       style="fill:#c22f34;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2.4353955,293.55083 c 0.056684,-0.0195 0.1237991,-0.0329 0.2183987,-0.0576 0.011372,-0.0639 0.075008,-0.0632 0.1312127,-0.17329 -0.2025505,0.16215 -0.2755202,0.14546 -0.3496114,0.23093 z"
+       id="path829"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="fill:#c22f32;fill-opacity:0.70588237;fill-rule:evenodd;stroke:none;stroke-width:0.02645833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 3.6950012,292.37832 c -0.1706351,0.46707 -0.2038188,0.7649 -0.1929351,1.0319 0.3690213,0.0732 0.4345946,-0.19228 0.8331291,0 -0.1375938,-0.37402 -0.3255773,-0.79642 -0.640194,-1.0319 z"
+       id="path831"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path833"
+       d="m 4.0253296,292.27016 c 0.3535161,0.2946 0.5043758,0.94322 0.458952,1.21022 0.4362563,0.009 0.2533524,-0.20398 0.6898893,-0.20171 -0.274987,-0.29509 -0.7319105,-0.88411 -1.1488413,-1.00851 z"
+       style="fill:#c22f32;fill-opacity:0.70588235;fill-rule:evenodd;stroke:none;stroke-width:0.02645833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>

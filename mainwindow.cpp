@@ -90,7 +90,6 @@ void MainWindow::addHistoryRow(QImage value) {
 	QTableWidgetItem* v = new QTableWidgetItem();
 	//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
 	v->setData(Qt::DecorationRole, QPixmap::fromImage(value).scaled(100, 100, Qt::KeepAspectRatio));
-	//v->setText(QString::number(value.size().width()) + "x" + QString::number(value.size().height()));
 	addHistoryRow(v);
 }
 
@@ -99,16 +98,10 @@ void MainWindow::onDataChanged(const QMimeData* data) {
 
 void MainWindow::onTextReceived(QString text) {
 	addHistoryRow(text);
-#ifdef QT_DEBUG
-	cout << "MainWindow> Text received" << endl;
-#endif
 }
 
 void MainWindow::onHtmlReceived(QString html) {
 	addHistoryRow(html);
-#ifdef QT_DEBUG
-	cout << "MainWindow> Html received" << endl;
-#endif
 }
 
 void MainWindow::onUrlsReceived(QList<QUrl> urls) {
@@ -119,23 +112,14 @@ void MainWindow::onUrlsReceived(QList<QUrl> urls) {
 			str += "\n";
 	}
 	addHistoryRow(str);
-#ifdef QT_DEBUG
-	cout << "MainWindow> Urls received" << endl;
-#endif
 }
 
 void MainWindow::onColorReceived(QColor color) {
 	addHistoryRow(color);
-#ifdef QT_DEBUG
-	cout << "MainWindow> Color received" << endl;
-#endif
 }
 
 void MainWindow::onImageReceived(QImage image) {
 	addHistoryRow(image);
-#ifdef QT_DEBUG
-	cout << "MainWindow> Image received" << endl;
-#endif
 }
 
 void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
@@ -158,7 +142,6 @@ void MainWindow::actionCopyHtml_triggered() {
 						   "</body>\n"
 						   "</html>");
 	data->clear();
-	//data->setText(html);
 	data->setData("text/html", html.toUtf8());
 	clip->setMimeType(data);
 	cout << "MainWindow::actionCopyHtml_triggered> Html saved" << endl;
