@@ -138,7 +138,7 @@ void Clip::onDataChanged() {
 #endif
 	}
 	else if (data->hasImage()) {
-		QImage image = data->colorData().value<QImage>();
+		QImage image = data->imageData().value<QImage>();
 		history.insert(index, image);
 		emit imageReceived(image);
 #ifdef QT_DEBUG

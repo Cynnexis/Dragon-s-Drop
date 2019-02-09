@@ -9,6 +9,7 @@
 #include <QColor>
 #include <QPainter>
 #include <QTimer>
+#include <QDesktopServices>
 
 #include "clip.h"
 //#include "mapmodel.h"
@@ -31,6 +32,7 @@ private slots:
 	void addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v);
 	void addHistoryRow(QTableWidgetItem* v);
 	void addHistoryRow(QString value);
+	void addHistoryRow(QUrl value);
 	void addHistoryRow(QColor value);
 	void addHistoryRow(QImage value);
 	
@@ -40,6 +42,8 @@ private slots:
 	void onUrlsReceived(QList<QUrl> urls);
 	void onColorReceived(QColor color);
 	void onImageReceived(QImage image);
+	
+	void on_tw_history_cellDoubleClicked(int row, int column);
 	
 #ifdef QT_DEBUG
 	void actionCopyText_triggered();

@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 		cout << "(" << QDateTime::currentDateTime().toString("HH:mm:ss").toStdString() << ") Table:\n";
 		for (int row = 0, rmax = this->ui->tw_history->rowCount(); row < rmax; row++) {
 			for (int col = 0, cmax = this->ui->tw_history->columnCount(); col < cmax; col++) {
-				cout << "[" << this->ui->tw_history->item(row, col)->text().replace("\n", "").toStdString() << "]\t";
+				cout << "[" << this->ui->tw_history->item(row, col)->text().replace("\n", "").toStdString() << "]" << (col < cmax-1 ? "\t" : "");
 			}
 			cout << "\n";
 		}
@@ -71,6 +71,10 @@ void MainWindow::addHistoryRow(QString value) {
 	addHistoryRow(new QTableWidgetItem(value));
 }
 
+void MainWindow::addHistoryRow(QUrl value) {
+	addHistoryRow(new QTableWidgetItem(value.toString()));
+}
+
 void MainWindow::addHistoryRow(QColor value) {
 	QTableWidgetItem* v = new QTableWidgetItem(value.name());
 	QFont consolas = QFont("Consolas");
@@ -85,7 +89,8 @@ void MainWindow::addHistoryRow(QColor value) {
 void MainWindow::addHistoryRow(QImage value) {
 	QTableWidgetItem* v = new QTableWidgetItem();
 	//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
-	v->setData(Qt::DecorationRole, QPixmap::fromImage(value));
+	v->setData(Qt::DecorationRole, QPixmap::fromImage(value).scaled(100, 100, Qt::KeepAspectRatio));
+	//v->setText(QString::number(value.size().width()) + "x" + QString::number(value.size().height()));
 	addHistoryRow(v);
 }
 
@@ -127,11 +132,16 @@ void MainWindow::onColorReceived(QColor color) {
 }
 
 void MainWindow::onImageReceived(QImage image) {
-	//addHistoryRow("(" + QString::number(image.rect().width()) + "x" + QString::number(image.rect().height()) + ")");
 	addHistoryRow(image);
 #ifdef QT_DEBUG
 	cout << "MainWindow> Image received" << endl;
 #endif
+}
+
+void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
+	QString url = ui->tw_history->item(row, column)->text();
+    if (Clip::isUrlValid(url))
+		QDesktopServices::openUrl(url);
 }
 
 #ifdef QT_DEBUG
