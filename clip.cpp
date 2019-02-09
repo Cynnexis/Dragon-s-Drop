@@ -1,6 +1,7 @@
 #include "clip.h"
 
 Clip* Clip::clip = nullptr;
+QRegularExpression Clip::urlPattern = QRegularExpression("^([a-z0-9+.-]+):(?://(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\\d*))?(/(?:[a-z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?|(/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?)(?:\\?((?:[a-z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*))?$", QRegularExpression::CaseInsensitiveOption);
 
 Clip::Clip(QObject* parent) : QObject(parent) {
 	connect(clipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(onModeChanged(QClipboard::Mode)));
@@ -12,6 +13,10 @@ Clip* Clip::getInstance(QObject* parent) {
 		Clip::clip = new Clip(parent);
 	
 	return Clip::clip;
+}
+
+bool Clip::isUrlValid(QString url) {
+	return urlPattern.match(url).hasMatch();
 }
 
 /* CLIPBOARD METHODS */
@@ -89,6 +94,22 @@ void Clip::onDataChanged() {
 		cout << "Clip> Received html = \"" + data->html().toStdString() + "\"" << endl;
 #endif
 	}
+	else if (data->hasColor()) {
+		QColor color = data->colorData().value<QColor>();
+		emit colorReceived(color);
+		history.insert(index, color);
+#ifdef QT_DEBUG
+		cout << "Clip> Received color (1) = \"" + color.name().toStdString() + "\"" << endl;
+#endif
+	}
+	else if (QColor::isValidColor(data->text())) {
+		QColor color = QColor(data->text());
+		emit colorReceived(color);
+		history.insert(index, color);
+#ifdef QT_DEBUG
+		cout << "Clip> Received color (2) = \"" + color.name().toStdString() + "\"" << endl;
+#endif
+	}
 	else if (data->hasUrls()) {
 		QString urls = "";
 		for (int i = 0, max = data->urls().count() ; i < max ; i++) {
@@ -99,23 +120,14 @@ void Clip::onDataChanged() {
 		history.insert(index, urls);
 		emit urlsReceived(data->urls());
 #ifdef QT_DEBUG
-		cout << "Clip> Received urls = \"" + urls.toStdString() + "\"" << endl;
+		cout << "Clip> Received urls (1) = \"" + urls.toStdString() + "\"" << endl;
 #endif
 	}
-	else if (data->hasColor()) {
-		QColor color = data->colorData().value<QColor>();
-		emit colorReceived(color);
-		history.insert(index, color);
+	else if (isUrlValid(data->text())) {
+		history.insert(index, data->text());
+		emit urlsReceived({data->text()});
 #ifdef QT_DEBUG
-		cout << "Clip> Received color = \"" + color.name().toStdString() + "\"" << endl;
-#endif
-	}
-	else if (QColor::isValidColor(data->text())) {
-		QColor color = QColor(data->text());
-		emit colorReceived(color);
-		history.insert(index, color);
-#ifdef QT_DEBUG
-		cout << "Clip> Received color = \"" + color.name().toStdString() + "\"" << endl;
+		cout << "Clip> Received urls (2) = \"" + data->text().toStdString() + "\"" << endl;
 #endif
 	}
 	else if (data->hasText()) {

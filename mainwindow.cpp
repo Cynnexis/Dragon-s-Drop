@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 	clip = Clip::getInstance(this);
+	data = new QMimeData();
 	
 	connect(clip, SIGNAL(dataChanged(const QMimeData*)), this, SLOT(onDataChanged(const QMimeData*)));
 	connect(clip, SIGNAL(textReceived(QString)), this, SLOT(onTextReceived(QString)));
@@ -35,6 +36,21 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(actionCopyImage, SIGNAL(triggered()), this, SLOT(actionCopyImage_triggered()));
 	
 	ui->menuBar->addMenu(mDebug);
+	
+	timer = new QTimer(this);
+	connect(timer, &QTimer::timeout, this, [this]() -> void {
+		cout << "(" << QDateTime::currentDateTime().toString("HH:mm:ss").toStdString() << ") Table:\n";
+		for (int row = 0, rmax = this->ui->tw_history->rowCount(); row < rmax; row++) {
+			for (int col = 0, cmax = this->ui->tw_history->columnCount(); col < cmax; col++) {
+				cout << "[" << this->ui->tw_history->item(row, col)->text().replace("\n", "").toStdString() << "]\t";
+			}
+			cout << "\n";
+		}
+		cout << endl << flush;
+		cout.flush();
+	});
+	timer->setInterval(5000);
+	timer->start(5000);
 #endif
 }
 
@@ -42,52 +58,35 @@ MainWindow::~MainWindow() {
 	delete ui;
 }
 
-void MainWindow::addHistoryRow(QString key, std::function<void(QTableWidgetItem*)> applyValue) {
-	QTableWidgetItem* k = new QTableWidgetItem(key);
-	QTableWidgetItem* v = new QTableWidgetItem();
-	applyValue(v);
-	cout << "MainWindow::addHistoryRow(QString, std::function)> Applying QTableWidgetItems" << endl;
+void MainWindow::addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v) {
 	ui->tw_history->setRowCount(ui->tw_history->rowCount()+1);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 0, k);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 1, v);
 }
 
-void MainWindow::addHistoryRow(QString key, QString value) {
-	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
-		v->setText(value);
-		cout << "MainWindow::addHistoryRow(QString, QString)> Applying QString" << endl;
-	});
+void MainWindow::addHistoryRow(QTableWidgetItem* v) {
+	addHistoryRow(new QTableWidgetItem(QDateTime::currentDateTime().toString("dd/MM/yy HH:mm:ss")), v);
 }
 void MainWindow::addHistoryRow(QString value) {
-	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
-}
-
-void MainWindow::addHistoryRow(QString key, QColor value) {
-	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
-		/*QFont consolas = QFont("Consolas");
-		consolas.setBold(true);
-		v->setFont(consolas);*/
-		v->setBackgroundColor(value);
-		if (value.lightness() < 180)
-			v->setForeground(QBrush(Qt::white));
-		cout << "MainWindow::addHistoryRow(QString, QColor)> Applying QColor" << endl;
-	});
+	addHistoryRow(new QTableWidgetItem(value));
 }
 
 void MainWindow::addHistoryRow(QColor value) {
-	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
-}
-
-void MainWindow::addHistoryRow(QString key, QImage value) {
-	addHistoryRow(key, [value](QTableWidgetItem* v) -> void {
-		//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
-		v->setData(Qt::DecorationRole, QPixmap::fromImage(value));
-		cout << "MainWindow::addHistoryRow(QString, QImage)> Applying QImage" << endl;
-	});
+	QTableWidgetItem* v = new QTableWidgetItem(value.name());
+	QFont consolas = QFont("Consolas");
+	consolas.setBold(true);
+	v->setFont(consolas);
+	v->setBackgroundColor(value);
+	if (value.lightness() < 180)
+		v->setForeground(QBrush(Qt::white));
+	addHistoryRow(v);
 }
 
 void MainWindow::addHistoryRow(QImage value) {
-	addHistoryRow(QDateTime().toString(Qt::SystemLocaleShortDate), value);
+	QTableWidgetItem* v = new QTableWidgetItem();
+	//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
+	v->setData(Qt::DecorationRole, QPixmap::fromImage(value));
+	addHistoryRow(v);
 }
 
 void MainWindow::onDataChanged(const QMimeData* data) {
@@ -137,22 +136,37 @@ void MainWindow::onImageReceived(QImage image) {
 
 #ifdef QT_DEBUG
 void MainWindow::actionCopyText_triggered() {
+	data->clear();
 	clip->setText("This is a text");
+	cout << "MainWindow::actionCopyText_triggered> Text saved" << endl;
 }
 
 void MainWindow::actionCopyHtml_triggered() {
-	data.setData("text/html", QString("<html><body><h1>This is HTML</h1></body></html>").toUtf8());
-	clip->setMimeType(&data);
+	QString html = QString("<html>\n"
+						   "<body>\n"
+						   "<!--StartFragment--><span style=\"color: rgb(84, 84, 84); font-family: arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\">Hello world</span><!--EndFragment-->\n"
+						   "</body>\n"
+						   "</html>");
+	data->clear();
+	//data->setText(html);
+	data->setData("text/html", html.toUtf8());
+	clip->setMimeType(data);
+	cout << "MainWindow::actionCopyHtml_triggered> Html saved" << endl;
 }
 
 void MainWindow::actionCopyUrl_triggered() {
-	data.setData("text/uri-list", QString("https://www.google.com").toUtf8());
-	clip->setMimeType(&data);
+	data->clear();
+	data->setText("https://www.google.com");
+	data->setData("text/uri-list", QString("https://www.google.com").toUtf8());
+	clip->setMimeType(data);
+	cout << "MainWindow::actionCopyUrl_triggered> Url saved" << endl;
 }
 
 void MainWindow::actionCopyColor_triggered() {
-	data.setText("#3e85cf");
-	clip->setMimeType(&data);
+	data->clear();
+	data->setText("#3e85cf");
+	clip->setMimeType(data);
+	cout << "MainWindow::actionCopyColor_triggered> Color saved" << endl;
 }
 
 void MainWindow::actionCopyImage_triggered() {
@@ -161,8 +175,9 @@ void MainWindow::actionCopyImage_triggered() {
 	painter.fillRect(image.rect(), Qt::white);
 	painter.drawText(image.rect(), Qt::AlignCenter | Qt::AlignVCenter, "Hello world!");
 	image.save("image.png");
-	data.setImageData(image);
-	clip->setMimeType(&data);
+	data->clear();
+	data->setImageData(image);
+	clip->setMimeType(data);
 	cout << "MainWindow::actionCopyImage_triggered> Image saved" << endl;
 }
 #endif

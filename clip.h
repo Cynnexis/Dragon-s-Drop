@@ -13,6 +13,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QVariant>
+#include <QRegularExpression>
 
 using namespace std;
 
@@ -24,6 +25,10 @@ private:
 	
 public:
 	static Clip* getInstance(QObject* parent = nullptr);
+	
+	/* METHOD */
+	
+	static bool isUrlValid(QString url);
 	
 	/* CLIPBOARD METHODS */
 	
@@ -66,6 +71,8 @@ private:
 	static Clip* clip;
 	QClipboard* clipboard = QGuiApplication::clipboard();
 	QMap<uint, QVariant> history;
+	
+	static QRegularExpression urlPattern;
 };
 
 #endif // CLIP_H

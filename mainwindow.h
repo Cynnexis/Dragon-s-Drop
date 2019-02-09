@@ -6,7 +6,9 @@
 #include <QMenu>
 #include <QTableWidgetItem>
 #include <QDateTime>
+#include <QColor>
 #include <QPainter>
+#include <QTimer>
 
 #include "clip.h"
 //#include "mapmodel.h"
@@ -26,12 +28,10 @@ public:
 	~MainWindow();
 	
 private slots:
-	void addHistoryRow(QString key, std::function<void(QTableWidgetItem*)> applyValue);
-	void addHistoryRow(QString key, QString value);
+	void addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v);
+	void addHistoryRow(QTableWidgetItem* v);
 	void addHistoryRow(QString value);
-	void addHistoryRow(QString key, QColor value);
 	void addHistoryRow(QColor value);
-	void addHistoryRow(QString key, QImage value);
 	void addHistoryRow(QImage value);
 	
 	void onDataChanged(const QMimeData*data);
@@ -61,7 +61,8 @@ private:
 	QAction* actionCopyUrl;
 	QAction* actionCopyColor;
 	QAction* actionCopyImage;
-	QMimeData data;
+	QMimeData* data;
+	QTimer* timer;
 #endif
 };
 
