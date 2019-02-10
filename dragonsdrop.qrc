@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/img/png">
+        <file alias="dragonsdrop16">res/dragonsdrop16.png</file>
+        <file alias="dragonsdrop32">res/dragonsdrop32.png</file>
+        <file alias="dragonsdrop48">res/dragonsdrop48.png</file>
+        <file alias="dragonsdrop64">res/dragonsdrop64.png</file>
+        <file alias="dragonsdrop1024">res/dragonsdrop1024.png</file>
+    </qresource>
+    <qresource prefix="/img/svg">
+        <file alias="dragonsdrop">res/dragonsdrop.svg</file>
+        <file alias="browser">res/browser.svg</file>
+        <file alias="down">res/down.svg</file>
+        <file alias="power">res/power.svg</file>
+        <file alias="qt">res/qt.svg</file>
+        <file alias="refresh">res/refresh.svg</file>
+        <file alias="settings">res/settings.svg</file>
+        <file alias="up">res/up.svg</file>
+    </qresource>
+</RCC>

@@ -15,6 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(clip, SIGNAL(colorReceived(QColor)), this, SLOT(onColorReceived(QColor)));
 	connect(clip, SIGNAL(imageReceived(QImage)), this, SLOT(onImageReceived(QImage)));
 	
+	ui->menuFile->setTitle(QApplication::applicationName());
+	
+	ui->actionSettings->setIcon(R::getSettings());
+	ui->actionExit->setIcon(R::getPower());
+	
 #ifdef QT_DEBUG
 	mDebug = new QMenu("Debug", ui->menuBar);
 	actionCopyText = new QAction("Copy text", mDebug);
@@ -126,6 +131,41 @@ void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
 	QString url = ui->tw_history->item(row, column)->text();
     if (Clip::isUrlValid(url))
 		QDesktopServices::openUrl(url);
+}
+
+void MainWindow::on_actionExit_triggered() {
+    qApp->exit();
+}
+
+void MainWindow::on_actionAbout_Dragon_s_Drop_triggered() {
+    QMessageBox::about(this, ui->actionAbout_Dragon_s_Drop->text(),
+					   "<p><b>Dragon's Drop</b> is an application that can synchronize your clipboard on multiple devices! It is written in C++ with <a href='https://www.qt.io/'>Qt</a> Framework.</p>"
+					   "<h2>Functionalities</h2>"
+					   "<ul>"
+					   "<li><b>Clipboard Manager:</b> You can manage your clipboard from here.</li>"
+					   "<li><b>Clipboard History:</b> What did you just copy? Check it out on the app!</li>"
+					   "<li><b>Edit your clipboard:</b> Open what's on yur clipboard, edit it, and paste it everywhere!</li>"
+					   "<li><b>Sync:</b> Copy your data from one devie, and paste it on another one!</li>"
+					   "</ul>"
+					   "<h2>Built with</h2>"
+					   "<p>This project has been built with:</p>"
+					   "<ul>"
+					   "<li><b><a href='https://www.qt.io/'>Qt</a>:</b> The best C++ framework to create GUI application.</li>"
+					   "<li><b><a href='https://atom.io/'>Atom</a>:</b> The hackable text editor for the 21st century.</li>"
+					   "<li><b><a href='https://desktop.github.com/'>GitHub Desktop</a>:</b> GitHub client software. Highly use-friendly.</li>"
+					   "<li><b>Hope:</b> Because we can't do anything without it!</li>"
+					   "</ul>"
+					   "<h2>Versioning</h2>"
+					   "<p>The project uses Git as a version control system, and <a href='https://github.com/'>GitHub</a> as a hub. <a href='https://desktop.github.com/'>GitHub Desktop</a> as been used as a client.</p>"
+					   "<h2>Author</h2>"
+					   "<p>This project has been made by <b>Valentin Berger</b> (username: <a href='https://github.com/Cynnexis/'>Cynnexis</a>)</p>"
+					   "<h2>License</h2>"
+					   "<p>This project is under the <b>GNU Affero General Public License v3.0</b> - see <a href='https://github.com/Cynnexis/Dragon-s-Drop/blob/master/LICENSE.txt'>LICENSE.txt</a> for more detail (I know that nobody will look at this file, licenses are so boring...)</p>"
+					   );
+}
+
+void MainWindow::on_actionAbout_Qt_triggered() {
+    QMessageBox::aboutQt(this, ui->actionAbout_Qt->text());
 }
 
 #ifdef QT_DEBUG

@@ -10,9 +10,10 @@
 #include <QPainter>
 #include <QTimer>
 #include <QDesktopServices>
+#include <QMessageBox>
 
 #include "clip.h"
-//#include "mapmodel.h"
+#include "r.h"
 
 using namespace std;
 
@@ -44,6 +45,10 @@ private slots:
 	void onImageReceived(QImage image);
 	
 	void on_tw_history_cellDoubleClicked(int row, int column);
+	
+	void on_actionExit_triggered();
+	void on_actionAbout_Dragon_s_Drop_triggered();
+	void on_actionAbout_Qt_triggered();
 	
 #ifdef QT_DEBUG
 	void actionCopyText_triggered();

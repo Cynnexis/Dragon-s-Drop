@@ -14,7 +14,12 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Dragon's Drop</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normalon>:/img/svg/dragonsdrop</normalon>
+   </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -72,8 +77,35 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionEdit_clipboard_as_text"/>
+    <addaction name="actionEdit_clipboard_as_color"/>
+    <addaction name="actionEdit_clipboard_as_HTML"/>
+    <addaction name="actionEdit_clipboard_as_image"/>
+   </widget>
+   <widget class="QMenu" name="menuSync">
+    <property name="title">
+     <string>Sync</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_Dragon_s_Drop"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSync"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -84,6 +116,66 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionSettings">
+   <property name="icon">
+    <iconset>
+     <normalon>:/img/svg/settings</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normalon>:/img/svg/power</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionEdit_clipboard_as_text">
+   <property name="text">
+    <string>Edit clipboard as text</string>
+   </property>
+  </action>
+  <action name="actionEdit_clipboard_as_color">
+   <property name="text">
+    <string>Edit clipboard as color</string>
+   </property>
+  </action>
+  <action name="actionEdit_clipboard_as_HTML">
+   <property name="text">
+    <string>Edit clipboard as HTML</string>
+   </property>
+  </action>
+  <action name="actionEdit_clipboard_as_image">
+   <property name="text">
+    <string>Edit clipboard as image</string>
+   </property>
+  </action>
+  <action name="actionAbout_Dragon_s_Drop">
+   <property name="icon">
+    <iconset>
+     <normalon>:/img/svg/dragonsdrop</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>About Dragon's Drop...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="icon">
+    <iconset>
+     <normalon>:/img/svg/qt</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

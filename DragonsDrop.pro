@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui svg xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,14 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     p.cpp \
-#    r.cpp \
+    r.cpp \
     clip.cpp \
     mapmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     p.h \
-#    r.h \
+    r.h \
     clip.h \
     mapmodel.h
 
@@ -52,3 +52,6 @@ DISTFILES += \
     doxy.conf \
     README.md \
     LICENSE.txt
+
+RESOURCES += \
+    dragonsdrop.qrc
