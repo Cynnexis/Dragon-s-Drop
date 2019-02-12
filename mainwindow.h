@@ -12,6 +12,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QTemporaryFile>
+#include <QTemporaryDir>
 
 #include "clip.h"
 #include "r.h"

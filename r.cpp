@@ -13,6 +13,16 @@ QString R::getTemporaryFileTemplate(QString suffix) {
 	return temp;
 }
 
+QString R::getTemporaryDirTemplate() {
+	QString dir = QDir::tempPath();
+	
+	if (!dir.endsWith("/"))
+		dir += "/";
+	
+	QString temp = dir + "dragonsdropXXXXXX";
+	return temp;
+}
+
 QPixmap R::getDragonsDropIcon() {
 	return getSvg(":/img/svg/dragonsdrop");
 }

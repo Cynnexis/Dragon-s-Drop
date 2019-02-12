@@ -139,20 +139,54 @@ void MainWindow::on_actionExit_triggered() {
 
 void MainWindow::on_actionEdit_clipboard_as_text_triggered() {
 	// See https://doc.qt.io/qt-5/qtemporarydir.html
-    QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
-	if (f.open()) {
-		//cout << QString("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName()).toStdString() << endl;
+    //QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
+	QTemporaryDir dir(R::getTemporaryDirTemplate());
+	QString path = dir.path() + (!dir.path().endsWith("/") ? "/" : "");
+	
+	//if (f.open()) {
+	
+	if (dir.isValid()) {
+		// Create file
+		QFile f(path + "dragonsdrop" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".txt");
+		
+		if (!f.open(QIODevice::ReadWrite | QIODevice::Text))
+			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
+		
+		// Write file
+		QTextStream out(&f);
+		out << clip->getText() << endl;
+		out.flush();
+		
+#ifdef QT_DEBUG
+		cout << QString("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName()).toStdString() << endl;
+#endif
+		// Open the app associated to the text files
 		QDesktopServices::openUrl("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName());
+		
+		// Display message box
 		QMessageBox box(this);
 		box.setIconPixmap(R::getDragonsDropIcon());
 		box.setWindowTitle(tr("Edit text..."));
-		box.setText(tr("Press 'Ok' when you finished the operation."));
+		box.setText(tr("Press 'Operation finished' when you finished the operation.", "The name of the button must also be translated"));
 		box.setStandardButtons(QMessageBox::Ok);
+		box.setButtonText(QMessageBox::Ok, tr("Operation finished"));
 		box.setModal(true);
 		box.exec();
-		// TODO: Read file.
+		
+		// Read file.
+		QString result = "";
+		QTextStream in(&f);
+		 while (!in.atEnd())
+			 result += in.readLine() + "\n";
+#ifdef QT_DEBUG
+		cout << "Result: " << result.toStdString() << endl;
+#endif
+		clip->setText(result);
+		
 		f.close();
 	}
+	else
+		QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary directory."));
 }
 
 void MainWindow::on_actionEdit_clipboard_as_color_triggered() {

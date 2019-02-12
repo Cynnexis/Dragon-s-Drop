@@ -17,6 +17,7 @@ using namespace std;
 namespace R {
 	
 	QString getTemporaryFileTemplate(QString suffix = "XXXXXX");
+	QString getTemporaryDirTemplate();
 	
 	QPixmap getDragonsDropIcon();
 	QPixmap getDragonsDropIcon(int size);
