@@ -137,6 +137,32 @@ void MainWindow::on_actionExit_triggered() {
     qApp->exit();
 }
 
+void MainWindow::on_actionEdit_clipboard_as_text_triggered() {
+	// See https://doc.qt.io/qt-5/qtemporarydir.html
+    QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
+	if (f.open()) {
+		//cout << QString("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName()).toStdString() << endl;
+		QDesktopServices::openUrl("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName());
+		QMessageBox box(this);
+		box.setIconPixmap(R::getDragonsDropIcon());
+		box.setWindowTitle(tr("Edit text..."));
+		box.setText(tr("Press 'Ok' when you finished the operation."));
+		box.setStandardButtons(QMessageBox::Ok);
+		box.setModal(true);
+		box.exec();
+		// TODO: Read file.
+		f.close();
+	}
+}
+
+void MainWindow::on_actionEdit_clipboard_as_color_triggered() {
+    //
+}
+
+void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
+    //
+}
+
 void MainWindow::on_actionAbout_Dragon_s_Drop_triggered() {
     QMessageBox::about(this, ui->actionAbout_Dragon_s_Drop->text(),
 					   "<p><b>Dragon's Drop</b> is an application that can synchronize your clipboard on multiple devices! It is written in C++ with <a href='https://www.qt.io/'>Qt</a> Framework.</p>"

@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QTemporaryFile>
 
 #include "clip.h"
 #include "r.h"
@@ -47,6 +48,9 @@ private slots:
 	void on_tw_history_cellDoubleClicked(int row, int column);
 	
 	void on_actionExit_triggered();
+	void on_actionEdit_clipboard_as_text_triggered();
+	void on_actionEdit_clipboard_as_color_triggered();
+	void on_actionEdit_clipboard_as_image_triggered();
 	void on_actionAbout_Dragon_s_Drop_triggered();
 	void on_actionAbout_Qt_triggered();
 	

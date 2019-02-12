@@ -10,10 +10,13 @@
 #include <QPainter>
 #include <QIcon>
 #include <QTextStream>
+#include <QDir>
 
 using namespace std;
 
 namespace R {
+	
+	QString getTemporaryFileTemplate(QString suffix = "XXXXXX");
 	
 	QPixmap getDragonsDropIcon();
 	QPixmap getDragonsDropIcon(int size);
