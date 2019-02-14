@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QTemporaryFile>
 #include <QTemporaryDir>
+#include <QFileInfo>
+#include <QColorDialog>
 
 #include "clip.h"
 #include "r.h"
@@ -31,6 +33,8 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 	
+	void editClipboard(QString fileExtension, std::function<bool(QFile*)> write, std::function<bool(QFile*)> read);
+	
 private slots:
 	void addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v);
 	void addHistoryRow(QTableWidgetItem* v);
@@ -39,7 +43,7 @@ private slots:
 	void addHistoryRow(QColor value);
 	void addHistoryRow(QImage value);
 	
-	void onDataChanged(const QMimeData*data);
+	void onDataChanged(const QMimeData*);
 	void onTextReceived(QString text);
 	void onHtmlReceived(QString html);
 	void onUrlsReceived(QList<QUrl> urls);
