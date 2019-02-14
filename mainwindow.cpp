@@ -176,8 +176,13 @@ void MainWindow::on_actionEdit_clipboard_as_text_triggered() {
 		// Read file.
 		QString result = "";
 		QTextStream in(&f);
-		 while (!in.atEnd())
-			 result += in.readLine() + "\n";
+		in.seek(0);
+		while (!in.atEnd())
+			result += in.readLine() + "\n";
+		
+		// Remove last "\n"
+		if (result.endsWith("\n"))
+			result.remove(QRegularExpression("\\n$"));
 #ifdef QT_DEBUG
 		cout << "Result: " << result.toStdString() << endl;
 #endif
