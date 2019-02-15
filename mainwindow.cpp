@@ -63,6 +63,10 @@ MainWindow::~MainWindow() {
 	delete ui;
 }
 
+void MainWindow::showEvent(QShowEvent*) {
+	clip->reprocessClipboardContent();
+}
+
 void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)> write, std::function<bool(QFile*)> read) {
 	// See https://doc.qt.io/qt-5/qtemporarydir.html
     //QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
@@ -72,22 +76,29 @@ void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)
 	if (!fileExtension.startsWith("."))
 		fileExtension = "." + fileExtension;
 	
+	QString filepath = path + "dragonsdrop" + QString::number(QDateTime::currentDateTime().toTime_t()) + fileExtension;
+	
 	if (dir.isValid()) {
 		// Create file
-		QFile f(path + "dragonsdrop" + QString::number(QDateTime::currentDateTime().toTime_t()) + fileExtension);
+		QFile* f = new QFile(filepath);
 		
-		if (!f.open(QIODevice::ReadWrite | QIODevice::Text))
+		if (!f->open(QIODevice::ReadWrite | QIODevice::Text)) {
 			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
+			return;
+		}
 		
 		// Write file
-		if (!write(&f))
+		if (!write(f))
 			return;
 		
-#ifdef QT_DEBUG
-		cout << QString("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName()).toStdString() << endl;
-#endif
+		f->close();
+		
 		// Open the app associated to the text files
-		QDesktopServices::openUrl("file://" + QString(f.fileName().startsWith("/") ? "" : "/") + f.fileName());
+		QString url = "file://" + QString(filepath.startsWith("/") ? "" : "/") + filepath;
+#ifdef QT_DEBUG
+		cout << url.toStdString() << endl;
+#endif
+		QDesktopServices::openUrl(url);
 		
 		// Display message box
 		QMessageBox box(this);
@@ -99,11 +110,18 @@ void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)
 		box.setModal(true);
 		box.exec();
 		
+		f = new QFile(filepath);
+		
+		if (!f->open(QIODevice::ReadWrite | QIODevice::Text)) {
+			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
+			return;
+		}
+		
 		// Read file.
-		if (!read(&f))
+		if (!read(f))
 			return;
 		
-		f.close();
+		f->close();
 	}
 	else
 		QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary directory."));
@@ -225,16 +243,18 @@ void MainWindow::on_actionEdit_clipboard_as_color_triggered() {
 }
 
 void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
-	editClipboard(".png",
+	editClipboard(".jpg",
 	[this](QFile* f) {
 		// Write
 		if (clip->getImage().isNull()) {
-			QMessageBox::warning(this, "Error", "No image in the clipboard");
+			QMessageBox::warning(this, tr("Error"), tr("No image in the clipboard"));
 			return false;
 		}
 		else {
-			//clip->getImage().save(f, "PNG");
-			clip->getPixmap().save(f, "PNG");
+#ifdef QT_DEBUG
+			cout << "MainWindow> Saving image to file: " << clip->getImage().size().width() << "x" << clip->getImage().size().height() << endl;
+#endif
+			clip->getImage().save(f, "JPG", 0);
 			return true;
 		}
 	},
@@ -248,10 +268,16 @@ void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
 		// Load the image
 		QImage image(QFileInfo(*f).absoluteFilePath());
 		
+		if (image.isNull()) {
+			QMessageBox::warning(this, tr("Error"), tr("Cannot load back the image. Did you delete the file?"));
+		}
+		else {
 #ifdef QT_DEBUG
-		cout << "Result: " << image.size().width() << "x" << image.size().height() << endl;
+			cout << "Result: " << image.size().width() << "x" << image.size().height() << endl;
 #endif
-		clip->setImage(image);
+			clip->setImage(image);
+		}
+		
 		return true;
 	});
 }
