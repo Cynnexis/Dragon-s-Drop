@@ -67,7 +67,11 @@ void MainWindow::showEvent(QShowEvent*) {
 	clip->reprocessClipboardContent();
 }
 
-void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)> write, std::function<bool(QFile*)> read) {
+void MainWindow::editClipboard(QString fileExtension,
+							   std::function<bool(QFile*)> write,
+							   std::function<bool(QFile*)> read,
+							   QIODevice::OpenMode writeFlags,
+							   QIODevice::OpenMode readFlags) {
 	// See https://doc.qt.io/qt-5/qtemporarydir.html
     //QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
 	QTemporaryDir dir(R::getTemporaryDirTemplate());
@@ -82,7 +86,7 @@ void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)
 		// Create file
 		QFile* f = new QFile(filepath);
 		
-		if (!f->open(QIODevice::ReadWrite | QIODevice::Text)) {
+		if (!f->open(writeFlags)) {
 			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
 			return;
 		}
@@ -112,7 +116,7 @@ void MainWindow::editClipboard(QString fileExtension, std::function<bool(QFile*)
 		
 		f = new QFile(filepath);
 		
-		if (!f->open(QIODevice::ReadWrite | QIODevice::Text)) {
+		if (!f->open(readFlags)) {
 			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
 			return;
 		}
@@ -243,7 +247,7 @@ void MainWindow::on_actionEdit_clipboard_as_color_triggered() {
 }
 
 void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
-	editClipboard(".jpg",
+	editClipboard(".png",
 	[this](QFile* f) {
 		// Write
 		if (clip->getImage().isNull()) {
@@ -254,7 +258,16 @@ void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
 #ifdef QT_DEBUG
 			cout << "MainWindow> Saving image to file: " << clip->getImage().size().width() << "x" << clip->getImage().size().height() << endl;
 #endif
-			clip->getImage().save(f, "JPG", 0);
+			QImageWriter writer(f, "PNG");
+			
+			if (!writer.canWrite()) {
+				QMessageBox::critical(this, "Error", "Cannot write the temporary image file. You should execute this application with higher permissions.");
+				f->close();
+				return false;
+			}
+			
+			writer.write(clip->getImage());
+			
 			return true;
 		}
 	},
@@ -279,7 +292,9 @@ void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
 		}
 		
 		return true;
-	});
+	},
+	QIODevice::WriteOnly,
+	QIODevice::ReadOnly);
 }
 
 void MainWindow::on_actionAbout_Dragon_s_Drop_triggered() {
@@ -349,9 +364,11 @@ void MainWindow::actionCopyColor_triggered() {
 
 void MainWindow::actionCopyImage_triggered() {
 	QImage image = QImage(100, 50, QImage::Format_ARGB32_Premultiplied);
+	image.fill(Qt::white);
 	QPainter painter(&image);
 	painter.fillRect(image.rect(), Qt::white);
 	painter.drawText(image.rect(), Qt::AlignCenter | Qt::AlignVCenter, "Hello world!");
+	painter.end();
 	image.save("image.png");
 	data->clear();
 	data->setImageData(image);

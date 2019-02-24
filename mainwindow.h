@@ -15,6 +15,7 @@
 #include <QTemporaryDir>
 #include <QFileInfo>
 #include <QColorDialog>
+#include <QImageWriter>
 
 #include "clip.h"
 #include "r.h"
@@ -59,7 +60,11 @@ public:
 	 * @param write Function that write the clipboard content in the given `QFile`. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
 	 * @param read Function that read the given `QFile` content to the clipboard. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
 	 */
-	void editClipboard(QString fileExtension, std::function<bool(QFile*)> write, std::function<bool(QFile*)> read);
+	void editClipboard(QString fileExtension,
+					   std::function<bool(QFile*)> write,
+					   std::function<bool(QFile*)> read,
+					   QIODevice::OpenMode writeFlags = QIODevice::WriteOnly | QIODevice::Text,
+					   QIODevice::OpenMode readFlags = QIODevice::ReadOnly | QIODevice::Text);
 	
 private slots:
 	/**
