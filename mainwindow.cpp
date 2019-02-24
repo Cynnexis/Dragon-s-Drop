@@ -63,6 +63,74 @@ MainWindow::~MainWindow() {
 	delete ui;
 }
 
+void MainWindow::showEvent(QShowEvent*) {
+	clip->reprocessClipboardContent();
+}
+
+void MainWindow::editClipboard(QString fileExtension,
+							   std::function<bool(QFile*)> write,
+							   std::function<bool(QFile*)> read,
+							   QIODevice::OpenMode writeFlags,
+							   QIODevice::OpenMode readFlags) {
+	// See https://doc.qt.io/qt-5/qtemporarydir.html
+    //QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
+	QTemporaryDir dir(R::getTemporaryDirTemplate());
+	QString path = dir.path() + (!dir.path().endsWith("/") ? "/" : "");
+	
+	if (!fileExtension.startsWith("."))
+		fileExtension = "." + fileExtension;
+	
+	QString filepath = path + "dragonsdrop" + QString::number(QDateTime::currentDateTime().toTime_t()) + fileExtension;
+	
+	if (dir.isValid()) {
+		// Create file
+		QFile* f = new QFile(filepath);
+		
+		if (!f->open(writeFlags)) {
+			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
+			return;
+		}
+		
+		// Write file
+		if (!write(f))
+			return;
+		
+		f->close();
+		
+		// Open the app associated to the text files
+		QString url = "file://" + QString(filepath.startsWith("/") ? "" : "/") + filepath;
+#ifdef QT_DEBUG
+		cout << url.toStdString() << endl;
+#endif
+		QDesktopServices::openUrl(url);
+		
+		// Display message box
+		QMessageBox box(this);
+		box.setIconPixmap(R::getDragonsDropIcon());
+		box.setWindowTitle(tr("Edit text..."));
+		box.setText(tr("Press 'Operation finished' when you finished the operation.", "The name of the button must also be translated"));
+		box.setStandardButtons(QMessageBox::Ok);
+		box.setButtonText(QMessageBox::Ok, tr("Operation finished"));
+		box.setModal(true);
+		box.exec();
+		
+		f = new QFile(filepath);
+		
+		if (!f->open(readFlags)) {
+			QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary file."));
+			return;
+		}
+		
+		// Read file.
+		if (!read(f))
+			return;
+		
+		f->close();
+	}
+	else
+		QMessageBox::critical(this, tr("Error"), tr("An error occured while creating the temporary directory."));
+}
+
 void MainWindow::addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v) {
 	ui->tw_history->setRowCount(ui->tw_history->rowCount()+1);
 	ui->tw_history->setItem(ui->tw_history->rowCount() - 1, 0, k);
@@ -86,7 +154,7 @@ void MainWindow::addHistoryRow(QColor value) {
 	consolas.setBold(true);
 	v->setFont(consolas);
 	v->setBackgroundColor(value);
-	if (value.lightness() < 180)
+	if (value.lightness() < 170)
 		v->setForeground(QBrush(Qt::white));
 	addHistoryRow(v);
 }
@@ -98,7 +166,7 @@ void MainWindow::addHistoryRow(QImage value) {
 	addHistoryRow(v);
 }
 
-void MainWindow::onDataChanged(const QMimeData* data) {
+void MainWindow::onDataChanged(const QMimeData*) {
 }
 
 void MainWindow::onTextReceived(QString text) {
@@ -135,6 +203,98 @@ void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
 
 void MainWindow::on_actionExit_triggered() {
     qApp->exit();
+}
+
+void MainWindow::on_actionEdit_clipboard_as_text_triggered() {
+	editClipboard(".txt",
+	[this](QFile* f) {
+		// Write
+		QTextStream out(f);
+		out << clip->getText() << endl;
+		out.flush();
+		return true;
+	},
+	[this](QFile* f) {
+		// Read
+		QString result = "";
+		QTextStream in(f);
+		in.seek(0);
+		while (!in.atEnd())
+			result += in.readLine() + "\n";
+		
+		// Remove last "\n"
+		if (result.endsWith("\n"))
+			result.remove(QRegularExpression("\\n$"));
+#ifdef QT_DEBUG
+		cout << "Result: " << result.toStdString() << endl;
+#endif
+		clip->setText(result);
+		return true;
+	});
+}
+
+void MainWindow::on_actionEdit_clipboard_as_color_triggered() {
+	QColor* initialColor = nullptr;
+	if (QColor::isValidColor(clip->getText()))
+		initialColor = new QColor(clip->getText());
+	else
+		initialColor = new QColor(Qt::black);
+	
+	QColor newColor = QColorDialog::getColor(*initialColor, this, "Pick a new color", QColorDialog::ShowAlphaChannel);
+	
+	if (newColor.isValid())
+		clip->setText(newColor.name());
+}
+
+void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
+	editClipboard(".png",
+	[this](QFile* f) {
+		// Write
+		if (clip->getImage().isNull()) {
+			QMessageBox::warning(this, tr("Error"), tr("No image in the clipboard"));
+			return false;
+		}
+		else {
+#ifdef QT_DEBUG
+			cout << "MainWindow> Saving image to file: " << clip->getImage().size().width() << "x" << clip->getImage().size().height() << endl;
+#endif
+			QImageWriter writer(f, "PNG");
+			
+			if (!writer.canWrite()) {
+				QMessageBox::critical(this, "Error", "Cannot write the temporary image file. You should execute this application with higher permissions.");
+				f->close();
+				return false;
+			}
+			
+			writer.write(clip->getImage());
+			
+			return true;
+		}
+	},
+	[this](QFile* f) {
+		// Read
+		
+		// Reset position carret
+		QTextStream in(f);
+		in.seek(0);
+		
+		// Load the image
+		QImage image(QFileInfo(*f).absoluteFilePath());
+		
+		if (image.isNull()) {
+			QMessageBox::warning(this, tr("Error"), tr("Cannot load back the image. Did you delete the file?"));
+		}
+		else {
+#ifdef QT_DEBUG
+			cout << "Result: " << image.size().width() << "x" << image.size().height() << endl;
+#endif
+			clip->setImage(image);
+		}
+		
+		return true;
+	},
+	QIODevice::WriteOnly,
+	QIODevice::ReadOnly);
 }
 
 void MainWindow::on_actionAbout_Dragon_s_Drop_triggered() {
@@ -204,9 +364,11 @@ void MainWindow::actionCopyColor_triggered() {
 
 void MainWindow::actionCopyImage_triggered() {
 	QImage image = QImage(100, 50, QImage::Format_ARGB32_Premultiplied);
+	image.fill(Qt::white);
 	QPainter painter(&image);
 	painter.fillRect(image.rect(), Qt::white);
 	painter.drawText(image.rect(), Qt::AlignCenter | Qt::AlignVCenter, "Hello world!");
+	painter.end();
 	image.save("image.png");
 	data->clear();
 	data->setImageData(image);

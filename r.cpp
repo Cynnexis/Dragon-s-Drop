@@ -1,11 +1,34 @@
 #include "r.h"
 
-QImage getDragonsDropIcon() {
-	return QImage(":/img/svg/dragonsdrop");
+QString R::getTemporaryFileTemplate(QString suffix) {
+	QString dir = QDir::tempPath();
+	
+	if (!dir.endsWith("/"))
+		dir += "/";
+	
+	if (!suffix.startsWith("."))
+		suffix = "." + suffix;
+	
+	QString temp = dir + "dragonsdropXXXXXX" + suffix;
+	return temp;
 }
 
-QImage getDragonsDropIcon(int size) {
-	return QImage(":/img/svg/dragonsdrop" + QString::number(size));
+QString R::getTemporaryDirTemplate() {
+	QString dir = QDir::tempPath();
+	
+	if (!dir.endsWith("/"))
+		dir += "/";
+	
+	QString temp = dir + "dragonsdropXXXXXX";
+	return temp;
+}
+
+QPixmap R::getDragonsDropIcon() {
+	return getSvg(":/img/svg/dragonsdrop");
+}
+
+QPixmap R::getDragonsDropIcon(int size) {
+	return getSvg(":/img/svg/dragonsdrop" + QString::number(size));
 }
 
 QPixmap R::getSettings(QColor tint) {

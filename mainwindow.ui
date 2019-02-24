@@ -87,7 +87,6 @@
     </property>
     <addaction name="actionEdit_clipboard_as_text"/>
     <addaction name="actionEdit_clipboard_as_color"/>
-    <addaction name="actionEdit_clipboard_as_HTML"/>
     <addaction name="actionEdit_clipboard_as_image"/>
    </widget>
    <widget class="QMenu" name="menuSync">
@@ -144,11 +143,6 @@
   <action name="actionEdit_clipboard_as_color">
    <property name="text">
     <string>Edit clipboard as color</string>
-   </property>
-  </action>
-  <action name="actionEdit_clipboard_as_HTML">
-   <property name="text">
-    <string>Edit clipboard as HTML</string>
    </property>
   </action>
   <action name="actionEdit_clipboard_as_image">

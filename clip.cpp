@@ -19,6 +19,10 @@ bool Clip::isUrlValid(QString url) {
 	return urlPattern.match(url).hasMatch();
 }
 
+void Clip::reprocessClipboardContent() {
+	onDataChanged();
+}
+
 /* CLIPBOARD METHODS */
 
 void Clip::clear() {
@@ -142,7 +146,7 @@ void Clip::onDataChanged() {
 		history.insert(index, image);
 		emit imageReceived(image);
 #ifdef QT_DEBUG
-		cout << "Clip> Received image = (" + QString::number(image.size().width()).toStdString() + "x" + QString::number(image.size().height()).toStdString() + ")" << endl;
+		cout << "Clip> Received image = (" << image.size().width() << "x" << image.size().height() << ")" << endl;
 #endif
 	}
 }

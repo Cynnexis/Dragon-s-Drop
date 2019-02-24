@@ -17,6 +17,29 @@
 
 using namespace std;
 
+/**
+ * This is the clipboard manager for the application. It is extended from
+ * the class [`QClipboard`](https://doc.qt.io/qt-5/qclipboard.html). To use it, you must first
+ * get the unique instance of the class by calling `getInstance()`:
+ * 
+ * @code
+ * Clip* myClip = Clip::getInstance();
+ * @endcode
+ * 
+ * It implements all methods from [`QClipboard`](https://doc.qt.io/qt-5/qclipboard.html),
+ * except that the getters begin with the prefix `get` (e.g. `clipboard->text()` becomes
+ * `clip->getText()`).
+ * 
+ * One of the most interesting feature in this class compared to
+ * [`QClipboard`](https://doc.qt.io/qt-5/qclipboard.html) is the signals:
+ * Instead of having on signal with a [`QMimeData`](https://doc.qt.io/qt-5/qmimedata.html),
+ * the class emits a signal depending on the MIME Type (e.g. A text-flavored content will
+ * emit the signal `Clip::textReceived(QString)`).
+ * 
+ * Finally, it also save the history of the clipboard.
+ * @brief Clipboard manager. It implements the Singleton pattern design.
+ * @author Valentin Berger
+ */
 class Clip : public QObject
 {
 	Q_OBJECT
@@ -24,11 +47,31 @@ private:
 	Clip(QObject* parent = nullptr);
 	
 public:
+	/**
+	 * Get the unique instance of the class
+	 * @param parent The parent of the class. It is not mandatory to provide it.
+	 * @return Return the unique instance of the class. It is advised to store
+	 * it in a pointer if you will use it frequently.
+	 */
 	static Clip* getInstance(QObject* parent = nullptr);
 	
 	/* METHOD */
 	
+	/**
+	 * Check if the given string is a valid URL using regular expression.
+	 * @param url The url to test.
+	 * @return Return `true` is the given string is a valid url, `false` otherwise.
+	 */
 	static bool isUrlValid(QString url);
+	
+	/**
+	 * Reprocess the actual clipboard content without changing it. As a result, the
+	 * instance will call all corresponding signals according to the clipboard MIME Data.
+	 * It is usefull when the clipboard have been changed before that the instance has
+	 * been connected to slots, or at startup of the application to get the actual
+	 * clipboard content.
+	 */
+	void reprocessClipboardContent();
 	
 	/* CLIPBOARD METHODS */
 	
