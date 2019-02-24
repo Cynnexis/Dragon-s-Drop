@@ -59,6 +59,8 @@ public:
 	 * @param fileExtension The file extension that can open the corresponding application.
 	 * @param write Function that write the clipboard content in the given `QFile`. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
 	 * @param read Function that read the given `QFile` content to the clipboard. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
+	 * @param writeFlags Specify the flags to open the temporary file for the writing process. By default, it is open with `QIODevice::WriteOnly | QIODevice::Text`.
+	 * @param readFlags Specify the flags to open the temporary file for the reading process. By default, it is open with `QIODevice::ReadOnly | QIODevice::Text`.
 	 */
 	void editClipboard(QString fileExtension,
 					   std::function<bool(QFile*)> write,
