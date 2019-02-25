@@ -20,6 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->actionSettings->setIcon(R::getSettings());
 	ui->actionExit->setIcon(R::getPower());
 	
+	// Context menu for tw_history
+	contextMenu_tw_history = new QMenu(this);
+	actionRevert = new QAction("Revert", this);
+	
+	contextMenu_tw_history->addAction(actionRevert);
+	
+	//connect(ui->tw_history, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_tw_history_customContextMenuRequested(QPoint)));
+	
 #ifdef QT_DEBUG
 	mDebug = new QMenu("Debug", ui->menuBar);
 	actionCopyText = new QAction("Copy text", mDebug);
@@ -138,7 +146,7 @@ void MainWindow::addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v) {
 }
 
 void MainWindow::addHistoryRow(QTableWidgetItem* v) {
-	addHistoryRow(new QTableWidgetItem(QDateTime::currentDateTime().toString("dd/MM/yy HH:mm:ss")), v);
+	addHistoryRow(new QTableWidgetItem(QDateTime::currentDateTime().toString(getDateTimeFormat())), v);
 }
 void MainWindow::addHistoryRow(QString value) {
 	addHistoryRow(new QTableWidgetItem(value));
@@ -164,6 +172,10 @@ void MainWindow::addHistoryRow(QImage value) {
 	//https://stackoverflow.com/questions/14365875/qt-cannot-put-an-image-in-a-table
 	v->setData(Qt::DecorationRole, QPixmap::fromImage(value).scaled(100, 100, Qt::KeepAspectRatio));
 	addHistoryRow(v);
+}
+
+QString MainWindow::getDateTimeFormat() {
+	return "dd/MM/yy HH:mm:ss";
 }
 
 void MainWindow::onDataChanged(const QMimeData*) {
@@ -199,6 +211,28 @@ void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
 	QString url = ui->tw_history->item(row, column)->text();
     if (Clip::isUrlValid(url))
 		QDesktopServices::openUrl(url);
+}
+
+void MainWindow::on_tw_history_customContextMenuRequested(const QPoint &pos) {
+	cout << "TILT" << endl;
+    QModelIndex model = ui->tw_history->indexAt(pos);
+	
+	// Get the first row (the date-time) to get the index in the history map (Clip::history)
+	QDateTime index;
+	if (model.row() == 0)
+		index = QDateTime::fromString(model.data().toString(), getDateTimeFormat());
+	else
+		index = QDateTime::fromString(ui->tw_history->item(0, model.column())->data(Qt::DisplayRole).toString());
+	
+#ifdef QT_DEBUG
+	cout << "on_tw_history_customContextMenuRequested> index: " << index.toTime_t() << "\t(MIME data: " << clip->getHistory()->take(index.toTime_t()) << endl;
+#endif
+	
+	connect(actionRevert, &QAction::triggered, this, [this]() -> void {
+		clip->setText("This is a test");
+	});
+	
+	contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);
 }
 
 void MainWindow::on_actionExit_triggered() {

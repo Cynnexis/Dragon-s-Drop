@@ -23,6 +23,95 @@ void Clip::reprocessClipboardContent() {
 	onDataChanged();
 }
 
+QVariant Clip::mimeDataToVariant(const QMimeData& data) {
+	QVariant variant;
+	
+	if (data.hasHtml())
+		variant = data.html();
+	else if (data.hasColor())
+		variant = data.colorData().value<QColor>();
+	else if (QColor::isValidColor(data.text()))
+		variant = QColor(data.text());
+	else if (data.hasUrls()) {
+		QString urls = "";
+		for (int i = 0, max = data.urls().count() ; i < max ; i++) {
+			urls += data.urls().at(i).toString();
+			if (i < max-1)
+				urls += ";";
+		}
+		variant = urls;
+	}
+	else if (data.hasText() || isUrlValid(data.text()))
+		variant = data.text();
+	else if (data.hasImage())
+		variant = data.imageData().value<QImage>();
+}
+
+QMimeData*Clip::variantToMimeData(const QVariant& data) {
+	if (!data.isValid())
+		return nullptr;
+	
+	QMimeData* mime = nullptr;
+	
+	// See https://doc.qt.io/qt-5/qmetatype.html#Type-enum
+	switch (data.type()) {
+		case QMetaType::UnknownType:
+		case QMetaType::Void:
+		case QMetaType::Nullptr:
+		case QMetaType::VoidStar:
+		case QMetaType::QObjectStar:
+		case QMetaType::QVariant:
+		default:
+			return nullptr;
+		case QMetaType::Bool:
+			mime->setText(data.toBool() ? "true" : "false");
+			break;
+		case QMetaType::Short:
+		case QMetaType::UShort:
+		case QMetaType::Int:
+			mime->setText(QString::number(data.toInt()));
+			break;
+		case QMetaType::UInt:
+			mime->setText(QString::number(data.toUInt()));
+			break;
+		case QMetaType::Double:
+			mime->setText(QString::number(data.toDouble()));
+			break;
+		case QMetaType::Float:
+			mime->setText(QString::number(data.toFloat()));
+			break;
+		case QMetaType::ULong:
+		case QMetaType::Long:
+		case QMetaType::ULongLong:
+		case QMetaType::LongLong:
+			mime->setText(QString::number(data.toLongLong()));
+			break;
+		case QMetaType::QChar:
+		case QMetaType::Char:
+		case QMetaType::SChar:
+		case QMetaType::UChar:
+			mime->setText(data.toChar());
+			break;
+		case QMetaType::QString:
+			mime->setText(data.toString());
+			break;
+		case QMetaType::QByteArray:
+			mime->setText(data.toByteArray());
+			break;
+		case QMetaType::QDate:
+			mime->setText(data.toDate().toString(Qt::SystemLocaleDate));
+			break;
+		case QMetaType::QSize:
+			mime->setText(QString::number(data.toSize().width()) + "x" + QString::number(data.toSize().height()));
+			break;
+		case QMetaType::QSizeF:
+			mime->setText(QString::number(data.toSizeF().width()) + "x" + QString::number(data.toSizeF().height()));
+			break;
+	}
+	
+	return mime;
+}
+
 /* CLIPBOARD METHODS */
 
 void Clip::clear() {

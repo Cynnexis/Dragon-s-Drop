@@ -73,6 +73,20 @@ public:
 	 */
 	void reprocessClipboardContent();
 	
+	/**
+	 * Convert a `QMimeData` instance into a `QVariant` if it is possible.
+	 * @param data The mime data to convert into a variant.
+	 * @return Return a variant if it is possible, otherwise return an empty variant.
+	 */
+	QVariant mimeDataToVariant(const QMimeData& data);
+	
+	/**
+	 * Convert a `QVariant` instance into a `QMimeData` if it is possible.
+	 * @param data The variant data to convert into a mime data
+	 * @return Return the pointer to a mime data if it is possible, otherwise return a null pointer.
+	 */
+	QMimeData* variantToMimeData(const QVariant& data);
+	
 	/* CLIPBOARD METHODS */
 	
 	void clear();

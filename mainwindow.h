@@ -107,6 +107,8 @@ private slots:
 	 */
 	void addHistoryRow(QImage value);
 	
+	QString getDateTimeFormat();
+	
 	void onDataChanged(const QMimeData*);
 	void onTextReceived(QString text);
 	void onHtmlReceived(QString html);
@@ -115,6 +117,7 @@ private slots:
 	void onImageReceived(QImage image);
 	
 	void on_tw_history_cellDoubleClicked(int row, int column);
+	void on_tw_history_customContextMenuRequested(const QPoint& pos);
 	
 	void on_actionExit_triggered();
 	void on_actionEdit_clipboard_as_text_triggered();
@@ -132,19 +135,22 @@ private slots:
 #endif
 	
 private:
-	Ui::MainWindow *ui;
+	Ui::MainWindow *ui = nullptr;
 	Clip* clip = nullptr;
 	//MapModel mapModel;
 	
+	QMenu* contextMenu_tw_history = nullptr;
+	QAction* actionRevert = nullptr;
+	
 #ifdef QT_DEBUG
-	QMenu* mDebug;
-	QAction* actionCopyText;
-	QAction* actionCopyHtml;
-	QAction* actionCopyUrl;
-	QAction* actionCopyColor;
-	QAction* actionCopyImage;
-	QMimeData* data;
-	QTimer* timer;
+	QMenu* mDebug = nullptr;
+	QAction* actionCopyText = nullptr;
+	QAction* actionCopyHtml = nullptr;
+	QAction* actionCopyUrl = nullptr;
+	QAction* actionCopyColor = nullptr;
+	QAction* actionCopyImage = nullptr;
+	QMimeData* data = nullptr;
+	QTimer* timer = nullptr;
 #endif
 };
 
