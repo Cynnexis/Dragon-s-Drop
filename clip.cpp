@@ -107,6 +107,42 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 		case QMetaType::QSizeF:
 			mime->setText(QString::number(data.toSizeF().width()) + "x" + QString::number(data.toSizeF().height()));
 			break;
+		case QMetaType::QTime:
+			mime->setText(data.toTime().toString(Qt::SystemLocaleDate));
+			break;
+		case QMetaType::QColor:
+			mime->setText(data.value<QColor>().name());
+			break;
+		case QMetaType::QStringList:
+			mime->setText(data.toStringList().join(";"));
+			break;
+		case QMetaType::QIcon:
+			mime->setImageData(data.value<QIcon>());
+			break;
+		case QMetaType::QUrl:
+			mime->setText(data.toUrl().toString());
+			break;
+		case QMetaType::QRegExp:
+			mime->setText(data.toRegExp().pattern());
+			break;
+		case QMetaType::QRegularExpression:
+			mime->setText(data.toRegularExpression().pattern());
+			break;
+		case QMetaType::QDateTime:
+			mime->setText(data.toDateTime().toString(Qt::SystemLocaleDate));
+			break;
+		case QMetaType::QFont:
+			mime->setText(data.value<QFont>().toString());
+			break;
+		case QMetaType::QImage:
+			mime->setImageData(data.value<QImage>());
+			break;
+		case QMetaType::QPixmap:
+			mime->setImageData(data.value<QPixmap>());
+			break;
+		case QMetaType::QBitmap:
+			mime->setImageData(data.value<QBitmap>());
+			break;
 	}
 	
 	return mime;

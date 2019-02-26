@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QColorDialog>
 #include <QImageWriter>
+#include <QMetaEnum>
 
 #include "clip.h"
 #include "r.h"

@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	
 	contextMenu_tw_history->addAction(actionRevert);
 	
-	//connect(ui->tw_history, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_tw_history_customContextMenuRequested(QPoint)));
-	
 #ifdef QT_DEBUG
 	mDebug = new QMenu("Debug", ui->menuBar);
 	actionCopyText = new QAction("Copy text", mDebug);
@@ -214,22 +212,21 @@ void MainWindow::on_tw_history_cellDoubleClicked(int row, int column) {
 }
 
 void MainWindow::on_tw_history_customContextMenuRequested(const QPoint &pos) {
-	cout << "TILT" << endl;
     QModelIndex model = ui->tw_history->indexAt(pos);
 	
-	// Get the first row (the date-time) to get the index in the history map (Clip::history)
-	QDateTime index;
-	if (model.row() == 0)
-		index = QDateTime::fromString(model.data().toString(), getDateTimeFormat());
-	else
-		index = QDateTime::fromString(ui->tw_history->item(0, model.column())->data(Qt::DisplayRole).toString());
+	// Get index in Clip::history
+	uint index = QDateTime::fromString(ui->tw_history->item(0, model.column())->text(), getDateTimeFormat()).toTime_t();
+	QVariant variant = clip->getHistory()->take(index);
 	
+	connect(actionRevert, &QAction::triggered, this, [this, variant]() -> void {
+		QMimeData* mime = Clip::variantToMimeData(variant);
+		
+		if (mime != nullptr)
+			clip->setMimeType(Clip::variantToMimeData(variant));
 #ifdef QT_DEBUG
-	cout << "on_tw_history_customContextMenuRequested> index: " << index.toTime_t() << "\t(MIME data: " << clip->getHistory()->take(index.toTime_t()) << endl;
+		else
+			cout << "on_tw_history_customContextMenuRequested> Cannot convert the QVariant instance to QMimeData*. QVariant type: " << variant.type() << endl;
 #endif
-	
-	connect(actionRevert, &QAction::triggered, this, [this]() -> void {
-		clip->setText("This is a test");
 	});
 	
 	contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);

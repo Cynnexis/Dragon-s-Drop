@@ -11,8 +11,12 @@
 #include <QUrl>
 #include <QColor>
 #include <QImage>
+#include <QIcon>
 #include <QPixmap>
+#include <QBitmap>
 #include <QVariant>
+#include <QMetaType>
+#include <QFont>
 #include <QRegularExpression>
 
 using namespace std;
@@ -78,14 +82,14 @@ public:
 	 * @param data The mime data to convert into a variant.
 	 * @return Return a variant if it is possible, otherwise return an empty variant.
 	 */
-	QVariant mimeDataToVariant(const QMimeData& data);
+	static QVariant mimeDataToVariant(const QMimeData& data);
 	
 	/**
 	 * Convert a `QVariant` instance into a `QMimeData` if it is possible.
 	 * @param data The variant data to convert into a mime data
 	 * @return Return the pointer to a mime data if it is possible, otherwise return a null pointer.
 	 */
-	QMimeData* variantToMimeData(const QVariant& data);
+	static QMimeData* variantToMimeData(const QVariant& data);
 	
 	/* CLIPBOARD METHODS */
 	
