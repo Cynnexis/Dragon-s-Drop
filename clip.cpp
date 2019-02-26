@@ -51,7 +51,7 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 	if (!data.isValid())
 		return nullptr;
 	
-	QMimeData* mime = nullptr;
+	QMimeData* mime = new QMimeData();
 	
 	// See https://doc.qt.io/qt-5/qmetatype.html#Type-enum
 	switch (data.type()) {
@@ -93,6 +93,9 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 			mime->setText(data.toChar());
 			break;
 		case QMetaType::QString:
+#ifdef QT_DEBUG
+			cout << "variantToMimeData> Variant to string: " << data.toString().toStdString() << endl;
+#endif
 			mime->setText(data.toString());
 			break;
 		case QMetaType::QByteArray:

@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	
 	ui->menuBar->addMenu(mDebug);
 	
+#if PRINT_TABLE_FREQUENTLY != 0
 	timer = new QTimer(this);
 	connect(timer, &QTimer::timeout, this, [this]() -> void {
 		cout << "(" << QDateTime::currentDateTime().toString("HH:mm:ss").toStdString() << ") Table:\n";
@@ -62,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	});
 	timer->setInterval(5000);
 	timer->start(5000);
+#endif
 #endif
 }
 
@@ -215,21 +217,37 @@ void MainWindow::on_tw_history_customContextMenuRequested(const QPoint &pos) {
     QModelIndex model = ui->tw_history->indexAt(pos);
 	
 	// Get index in Clip::history
-	uint index = QDateTime::fromString(ui->tw_history->item(0, model.column())->text(), getDateTimeFormat()).toTime_t();
-	QVariant variant = clip->getHistory()->take(index);
+	QDateTime date = QDateTime::fromString(ui->tw_history->item(model.row(), 0)->text(), getDateTimeFormat());
+	uint index = date.toTime_t();
 	
-	connect(actionRevert, &QAction::triggered, this, [this, variant]() -> void {
-		QMimeData* mime = Clip::variantToMimeData(variant);
-		
-		if (mime != nullptr)
-			clip->setMimeType(Clip::variantToMimeData(variant));
 #ifdef QT_DEBUG
-		else
-			cout << "on_tw_history_customContextMenuRequested> Cannot convert the QVariant instance to QMimeData*. QVariant type: " << variant.type() << endl;
+	cout << "on_tw_history_customContextMenuRequested> Index = \n\traw = " << ui->tw_history->item(model.row(), 0)->text().toStdString() << "\n\t" <<
+			"parsed (epoch) = " << index << "\n\t"
+			"parsed (date) = " << date.toString(getDateTimeFormat()).toStdString() << endl;
 #endif
-	});
 	
-	contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);
+	// Check the index exists in the map
+	if (clip->getHistory()->contains(index)) {
+		QVariant variant = clip->getHistory()->value(index);
+		
+		actionRevert->disconnect();
+		connect(actionRevert, &QAction::triggered, this, [this, variant]() -> void {
+			QMimeData* mime = Clip::variantToMimeData(variant);
+			
+			if (mime != nullptr)
+				clip->setMimeType(Clip::variantToMimeData(variant));
+	#ifdef QT_DEBUG
+			else
+				cout << "on_tw_history_customContextMenuRequested> Cannot convert the QVariant instance to QMimeData*. QVariant type: " << variant.type() << endl;
+	#endif
+		});
+		
+		contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);
+	}
+#ifdef QT_DEBUG
+	else
+		cout << "on_tw_history_customContextMenuRequested> The history map does not contain an index of '" << index << "' (" << date.toString(getDateTimeFormat()).toStdString() << ")" << endl;
+#endif
 }
 
 void MainWindow::on_actionExit_triggered() {

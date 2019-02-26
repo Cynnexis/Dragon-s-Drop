@@ -23,6 +23,9 @@
 
 using namespace std;
 
+
+#define PRINT_TABLE_FREQUENTLY 0
+
 namespace Ui {
 	class MainWindow;
 }
