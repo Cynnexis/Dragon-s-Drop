@@ -19,6 +19,12 @@ namespace R {
 	QString getTemporaryFileTemplate(QString suffix = "XXXXXX");
 	QString getTemporaryDirTemplate();
 	
+	/**
+	 * See https://www.browserling.com/tools/markdown-to-html
+	 * @return 
+	 */
+	QString getREADMEHtml();
+	
 	QPixmap getDragonsDropIcon();
 	QPixmap getDragonsDropIcon(int size);
 	

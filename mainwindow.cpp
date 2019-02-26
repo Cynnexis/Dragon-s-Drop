@@ -33,18 +33,22 @@ MainWindow::MainWindow(QWidget *parent) :
 	actionCopyUrl = new QAction("Copy URL", mDebug);
 	actionCopyColor = new QAction("Copy color", mDebug);
 	actionCopyImage = new QAction("Copy image", mDebug);
+	actionPrintHistoryMap = new QAction("Print history map", mDebug);
 	
 	mDebug->addAction(actionCopyText);
 	mDebug->addAction(actionCopyHtml);
 	mDebug->addAction(actionCopyUrl);
 	mDebug->addAction(actionCopyColor);
 	mDebug->addAction(actionCopyImage);
+	mDebug->addSeparator();
+	mDebug->addAction(actionPrintHistoryMap);
 	
 	connect(actionCopyText, SIGNAL(triggered()), this, SLOT(actionCopyText_triggered()));
 	connect(actionCopyHtml, SIGNAL(triggered()), this, SLOT(actionCopyHtml_triggered()));
 	connect(actionCopyUrl, SIGNAL(triggered()), this, SLOT(actionCopyUrl_triggered()));
 	connect(actionCopyColor, SIGNAL(triggered()), this, SLOT(actionCopyColor_triggered()));
 	connect(actionCopyImage, SIGNAL(triggered()), this, SLOT(actionCopyImage_triggered()));
+	connect(actionPrintHistoryMap, SIGNAL(triggered()), this, SLOT(actionPrintHistoryMap_triggered()));
 	
 	ui->menuBar->addMenu(mDebug);
 	
@@ -146,7 +150,9 @@ void MainWindow::addHistoryRow(QTableWidgetItem* k, QTableWidgetItem* v) {
 }
 
 void MainWindow::addHistoryRow(QTableWidgetItem* v) {
-	addHistoryRow(new QTableWidgetItem(QDateTime::currentDateTime().toString(getDateTimeFormat())), v);
+	// Get last key in the history
+	uint lastKey = clip->getHistory()->lastKey();
+	addHistoryRow(new QTableWidgetItem(QDateTime::fromTime_t(lastKey).toString(getDateTimeFormat())), v);
 }
 void MainWindow::addHistoryRow(QString value) {
 	addHistoryRow(new QTableWidgetItem(value));
@@ -175,7 +181,7 @@ void MainWindow::addHistoryRow(QImage value) {
 }
 
 QString MainWindow::getDateTimeFormat() {
-	return "dd/MM/yy HH:mm:ss";
+	return "dd/MM/yyyy HH:mm:ss";
 }
 
 void MainWindow::onDataChanged(const QMimeData*) {
@@ -222,27 +228,37 @@ void MainWindow::on_tw_history_customContextMenuRequested(const QPoint &pos) {
 	
 #ifdef QT_DEBUG
 	cout << "on_tw_history_customContextMenuRequested> Index = \n\traw = " << ui->tw_history->item(model.row(), 0)->text().toStdString() << "\n\t" <<
-			"parsed (epoch) = " << index << "\n\t"
+			"parsed (epoch) = " << index << "\n\t" <<
 			"parsed (date) = " << date.toString(getDateTimeFormat()).toStdString() << endl;
 #endif
 	
 	// Check the index exists in the map
 	if (clip->getHistory()->contains(index)) {
-		QVariant variant = clip->getHistory()->value(index);
+		QVariant variant = clip->getHistory()->value(index, QVariant(QVariant::Type::Invalid));
 		
-		actionRevert->disconnect();
-		connect(actionRevert, &QAction::triggered, this, [this, variant]() -> void {
-			QMimeData* mime = Clip::variantToMimeData(variant);
+		if (variant.isValid() && variant.type() != QVariant::Type::Invalid) {
+#ifdef QT_DEBUG
+			if (variant.type() == QVariant::Type::String)
+				cout << "on_tw_history_customContextMenuRequested> The variant is a string and its value is \"" << variant.toString().toStdString() << "\"." << endl;
+#endif
 			
-			if (mime != nullptr)
-				clip->setMimeType(Clip::variantToMimeData(variant));
-	#ifdef QT_DEBUG
-			else
-				cout << "on_tw_history_customContextMenuRequested> Cannot convert the QVariant instance to QMimeData*. QVariant type: " << variant.type() << endl;
-	#endif
-		});
-		
-		contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);
+			actionRevert->disconnect();
+			connect(actionRevert, &QAction::triggered, this, [this, variant]() -> void {
+				QMimeData* mime = Clip::variantToMimeData(variant);
+				
+				if (mime != nullptr)
+					clip->setMimeType(Clip::variantToMimeData(variant));
+#ifdef QT_DEBUG
+				else
+					cout << "on_tw_history_customContextMenuRequested> Cannot convert the QVariant instance to QMimeData*. QVariant type: " << variant.type() << endl;
+#endif
+			});
+			
+			contextMenu_tw_history->exec(mapToGlobal(pos), nullptr);
+		}
+#ifdef QT_DEBUG
+		cout << "on_tw_history_customContextMenuRequested> QVariant is invalid." << endl;
+#endif
 	}
 #ifdef QT_DEBUG
 	else
@@ -346,31 +362,30 @@ void MainWindow::on_actionEdit_clipboard_as_image_triggered() {
 	QIODevice::ReadOnly);
 }
 
+void MainWindow::on_actionClear_triggered()
+{
+    QMessageBox box(this);
+	box.setIcon(QMessageBox::Icon::Question);
+	box.setWindowTitle(tr("Clear clipboard"));
+	box.setText(tr("Are you sure you want to clear the clipboard?"));
+	box.setWindowModality(Qt::WindowModality::ApplicationModal);
+	box.setButtonText(QMessageBox::Yes, tr("Yes, clear the clipboard"));
+	box.setButtonText(QMessageBox::YesAll, tr("Yes, clear the clipboard and the history"));
+	box.setStandardButtons(QMessageBox::Yes | QMessageBox::YesAll | QMessageBox::Cancel);
+	int result = box.exec();
+	
+	if (result == QMessageBox::Yes)
+		clip->clear();
+	else if (result == QMessageBox::YesAll) {
+		clip->clear();
+		clip->getHistory()->clear();
+		ui->tw_history->clear();
+		ui->tw_history->setRowCount(0);
+	}
+}
+
 void MainWindow::on_actionAbout_Dragon_s_Drop_triggered() {
-    QMessageBox::about(this, ui->actionAbout_Dragon_s_Drop->text(),
-					   "<p><b>Dragon's Drop</b> is an application that can synchronize your clipboard on multiple devices! It is written in C++ with <a href='https://www.qt.io/'>Qt</a> Framework.</p>"
-					   "<h2>Functionalities</h2>"
-					   "<ul>"
-					   "<li><b>Clipboard Manager:</b> You can manage your clipboard from here.</li>"
-					   "<li><b>Clipboard History:</b> What did you just copy? Check it out on the app!</li>"
-					   "<li><b>Edit your clipboard:</b> Open what's on yur clipboard, edit it, and paste it everywhere!</li>"
-					   "<li><b>Sync:</b> Copy your data from one devie, and paste it on another one!</li>"
-					   "</ul>"
-					   "<h2>Built with</h2>"
-					   "<p>This project has been built with:</p>"
-					   "<ul>"
-					   "<li><b><a href='https://www.qt.io/'>Qt</a>:</b> The best C++ framework to create GUI application.</li>"
-					   "<li><b><a href='https://atom.io/'>Atom</a>:</b> The hackable text editor for the 21st century.</li>"
-					   "<li><b><a href='https://desktop.github.com/'>GitHub Desktop</a>:</b> GitHub client software. Highly use-friendly.</li>"
-					   "<li><b>Hope:</b> Because we can't do anything without it!</li>"
-					   "</ul>"
-					   "<h2>Versioning</h2>"
-					   "<p>The project uses Git as a version control system, and <a href='https://github.com/'>GitHub</a> as a hub. <a href='https://desktop.github.com/'>GitHub Desktop</a> as been used as a client.</p>"
-					   "<h2>Author</h2>"
-					   "<p>This project has been made by <b>Valentin Berger</b> (username: <a href='https://github.com/Cynnexis/'>Cynnexis</a>)</p>"
-					   "<h2>License</h2>"
-					   "<p>This project is under the <b>GNU Affero General Public License v3.0</b> - see <a href='https://github.com/Cynnexis/Dragon-s-Drop/blob/master/LICENSE.txt'>LICENSE.txt</a> for more detail (I know that nobody will look at this file, licenses are so boring...)</p>"
-					   );
+	QMessageBox::about(this, ui->actionAbout_Dragon_s_Drop->text(), R::getREADMEHtml());
 }
 
 void MainWindow::on_actionAbout_Qt_triggered() {
@@ -423,5 +438,21 @@ void MainWindow::actionCopyImage_triggered() {
 	data->setImageData(image);
 	clip->setMimeType(data);
 	cout << "MainWindow::actionCopyImage_triggered> Image saved" << endl;
+}
+
+void MainWindow::actionPrintHistoryMap_triggered() {
+	cout << endl;
+	
+	for (uint key : clip->getHistory()->keys()) {
+		cout << QDateTime::fromTime_t(key).toString(getDateTimeFormat()).toStdString() << " (" << key << ")\t->\t";
+		QVariant v = clip->getHistory()->value(key, QVariant(""));
+		if (v.isValid() && v.type() == QVariant::Type::String)
+			cout << "'" << v.toString().toStdString() << "'";
+		else
+			cout << "<not_string>";
+		cout << endl;
+	}
+	
+	cout << endl;
 }
 #endif

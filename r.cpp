@@ -23,6 +23,23 @@ QString R::getTemporaryDirTemplate() {
 	return temp;
 }
 
+QString R::getREADMEHtml() {
+	QFile f(":/txt/README_html");
+	
+	if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+		return "";
+	
+	QString content = "";
+	QTextStream in(&f);
+	
+	while (!in.atEnd())
+		content += in.readLine() + "\n";
+	
+	f.close();
+	
+	return content;
+}
+
 QPixmap R::getDragonsDropIcon() {
 	return getSvg(":/img/svg/dragonsdrop");
 }

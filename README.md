@@ -10,15 +10,15 @@
 
 * **Clipboard Manager:** You can manage your clipboard from here.
 * **Clipboard History:** What did you just copy? Check it out on the app!
-* **Edit your clipboard:** Open what's on yur clipboard, edit it, and paste it everywhere!
-* **Sync:** Copy your data from one devie, and paste it on another one!
+* **Edit your clipboard:** Open what's on your clipboard, edit it, and paste it everywhere!
+* **Sync:** Copy your data from one device, and paste it on another one!
 
 ## Built with ##
 This project has been built with:
 
 * **[Qt](https://www.qt.io/):** The best C++ framework to create GUI application.
 * **[Atom](https://atom.io/):** *The hackable text editor for the 21st century*.
-* **[GitHub Desktop](https://desktop.github.com/):** GitHub client software. Highly use-friendly.
+* **[GitHub Desktop](https://desktop.github.com/):** GitHub client software. Highly user-friendly.
 * **Hope:** Because we can't do anything without it!
 
 ## Versioning ##

@@ -214,7 +214,7 @@ void Clip::onModeChanged(QClipboard::Mode mode) {
 }
 
 void Clip::onDataChanged() {
-	uint index = QDateTime().toTime_t();
+	uint index = QDateTime::currentDateTime().toTime_t();
 	
 	const QMimeData* data = clipboard->mimeData();
 	emit dataChanged(data);

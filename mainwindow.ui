@@ -91,6 +91,8 @@
     <addaction name="actionEdit_clipboard_as_text"/>
     <addaction name="actionEdit_clipboard_as_color"/>
     <addaction name="actionEdit_clipboard_as_image"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
    </widget>
    <widget class="QMenu" name="menuSync">
     <property name="title">
@@ -171,6 +173,11 @@
    </property>
    <property name="text">
     <string>About Qt...</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
    </property>
   </action>
  </widget>

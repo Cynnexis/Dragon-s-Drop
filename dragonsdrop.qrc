@@ -16,4 +16,7 @@
         <file alias="settings">res/settings.svg</file>
         <file alias="up">res/up.svg</file>
     </qresource>
+    <qresource prefix="/txt">
+        <file alias="README_html">res/README.html</file>
+    </qresource>
 </RCC>

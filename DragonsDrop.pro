@@ -51,7 +51,8 @@ DISTFILES += \
     .gitignore \
     doxy.conf \
     README.md \
-    LICENSE.txt
+    LICENSE.txt \
+    res/README.html
 
 RESOURCES += \
     dragonsdrop.qrc

@@ -136,7 +136,10 @@ private slots:
 	void actionCopyUrl_triggered();
 	void actionCopyColor_triggered();
 	void actionCopyImage_triggered();
+	void actionPrintHistoryMap_triggered();
 #endif
+	
+	void on_actionClear_triggered();
 	
 private:
 	Ui::MainWindow *ui = nullptr;
@@ -153,6 +156,7 @@ private:
 	QAction* actionCopyUrl = nullptr;
 	QAction* actionCopyColor = nullptr;
 	QAction* actionCopyImage = nullptr;
+	QAction* actionPrintHistoryMap = nullptr;
 	QMimeData* data = nullptr;
 	QTimer* timer = nullptr;
 #endif
