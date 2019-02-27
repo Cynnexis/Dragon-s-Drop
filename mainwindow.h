@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <QMainWindow>
+#include <QAbstractButton>
+#include <QPushButton>
 #include <QMenu>
 #include <QTableWidgetItem>
 #include <QDateTime>

@@ -369,14 +369,14 @@ void MainWindow::on_actionClear_triggered()
 	box.setWindowTitle(tr("Clear clipboard"));
 	box.setText(tr("Are you sure you want to clear the clipboard?"));
 	box.setWindowModality(Qt::WindowModality::ApplicationModal);
-	box.setButtonText(QMessageBox::Yes, tr("Yes, clear the clipboard"));
-	box.setButtonText(QMessageBox::YesAll, tr("Yes, clear the clipboard and the history"));
-	box.setStandardButtons(QMessageBox::Yes | QMessageBox::YesAll | QMessageBox::Cancel);
-	int result = box.exec();
+	QPushButton* b_clearClipboard = box.addButton(tr("Yes, clear the clipboard"), QMessageBox::ButtonRole::YesRole);
+	QPushButton* b_clearClipboardHistory = box.addButton(tr("Yes, clear the clipboard and the history"), QMessageBox::ButtonRole::YesRole);
+	box.addButton(QMessageBox::Abort);
+	box.exec();
 	
-	if (result == QMessageBox::Yes)
+	if (box.clickedButton() == b_clearClipboard)
 		clip->clear();
-	else if (result == QMessageBox::YesAll) {
+	else if (box.clickedButton() == b_clearClipboardHistory) {
 		clip->clear();
 		clip->getHistory()->clear();
 		ui->tw_history->clear();
