@@ -18,6 +18,7 @@
 #include <QMetaType>
 #include <QFont>
 #include <QRegularExpression>
+#include <QUuid>
 
 using namespace std;
 
@@ -108,8 +109,8 @@ public:
 	
 	/* GETTER & SETTERS */
 	
-	QMap<uint, QVariant>* getHistory();
-	void setHistory(const QMap<uint, QVariant>& value);
+	QMap<qint64, QVariant>* getHistory();
+	void setHistory(const QMap<qint64, QVariant>& value);
 	
 signals:
 	void modeChanged(QClipboard::Mode);
@@ -131,7 +132,7 @@ private slots:
 private:
 	static Clip* clip;
 	QClipboard* clipboard = QGuiApplication::clipboard();
-	QMap<uint, QVariant> history;
+	QMap<qint64, QVariant> history;
 	
 	static QRegularExpression urlPattern;
 };

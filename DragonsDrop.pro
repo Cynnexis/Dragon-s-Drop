@@ -30,14 +30,22 @@ SOURCES += \
     p.cpp \
     r.cpp \
     clip.cpp \
-    mapmodel.cpp
+    mapmodel.cpp \
+    editclipboard.cpp \
+    edittextclipboard.cpp \
+    editimageclipboard.cpp \
+    editcolorclipboard.cpp
 
 HEADERS += \
         mainwindow.h \
     p.h \
     r.h \
     clip.h \
-    mapmodel.h
+    mapmodel.h \
+    editclipboard.h \
+    edittextclipboard.h \
+    editimageclipboard.h \
+    editcolorclipboard.h
 
 FORMS += \
         mainwindow.ui

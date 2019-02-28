@@ -55,96 +55,83 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 	
 	// See https://doc.qt.io/qt-5/qmetatype.html#Type-enum
 	switch (data.type()) {
-		case QMetaType::UnknownType:
-		case QMetaType::Void:
-		case QMetaType::Nullptr:
-		case QMetaType::VoidStar:
-		case QMetaType::QObjectStar:
-		case QMetaType::QVariant:
 		default:
 			return nullptr;
-		case QMetaType::Bool:
+		case QVariant::Bool:
 			mime->setText(data.toBool() ? "true" : "false");
 			break;
-		case QMetaType::Short:
-		case QMetaType::UShort:
-		case QMetaType::Int:
+		case QVariant::Int:
 			mime->setText(QString::number(data.toInt()));
 			break;
-		case QMetaType::UInt:
+		case QVariant::UInt:
 			mime->setText(QString::number(data.toUInt()));
 			break;
-		case QMetaType::Double:
+		case QVariant::Double:
 			mime->setText(QString::number(data.toDouble()));
 			break;
-		case QMetaType::Float:
-			mime->setText(QString::number(data.toFloat()));
-			break;
-		case QMetaType::ULong:
-		case QMetaType::Long:
-		case QMetaType::ULongLong:
-		case QMetaType::LongLong:
+		case QVariant::ULongLong:
+		case QVariant::LongLong:
 			mime->setText(QString::number(data.toLongLong()));
 			break;
-		case QMetaType::QChar:
-		case QMetaType::Char:
-		case QMetaType::SChar:
-		case QMetaType::UChar:
+		case QVariant::Char:
 			mime->setText(data.toChar());
 			break;
-		case QMetaType::QString:
+		case QVariant::String:
 #ifdef QT_DEBUG
 			cout << "variantToMimeData> Variant to string: " << data.toString().toStdString() << endl;
 #endif
 			mime->setText(data.toString());
 			break;
-		case QMetaType::QByteArray:
+		case QVariant::ByteArray:
 			mime->setText(data.toByteArray());
 			break;
-		case QMetaType::QDate:
+		case QVariant::Date:
 			mime->setText(data.toDate().toString(Qt::SystemLocaleDate));
 			break;
-		case QMetaType::QSize:
+		case QVariant::Size:
 			mime->setText(QString::number(data.toSize().width()) + "x" + QString::number(data.toSize().height()));
 			break;
-		case QMetaType::QSizeF:
+		case QVariant::SizeF:
 			mime->setText(QString::number(data.toSizeF().width()) + "x" + QString::number(data.toSizeF().height()));
 			break;
-		case QMetaType::QTime:
+		case QVariant::Time:
 			mime->setText(data.toTime().toString(Qt::SystemLocaleDate));
 			break;
-		case QMetaType::QColor:
+		case QVariant::Color:
 			mime->setText(data.value<QColor>().name());
 			break;
-		case QMetaType::QStringList:
+		case QVariant::StringList:
 			mime->setText(data.toStringList().join(";"));
 			break;
-		case QMetaType::QIcon:
+		case QVariant::Icon:
 			mime->setImageData(data.value<QIcon>());
 			break;
-		case QMetaType::QUrl:
+		case QVariant::Url:
 			mime->setText(data.toUrl().toString());
 			break;
-		case QMetaType::QRegExp:
+		case QVariant::RegExp:
 			mime->setText(data.toRegExp().pattern());
 			break;
-		case QMetaType::QRegularExpression:
+		case QVariant::RegularExpression:
 			mime->setText(data.toRegularExpression().pattern());
 			break;
-		case QMetaType::QDateTime:
+		case QVariant::DateTime:
 			mime->setText(data.toDateTime().toString(Qt::SystemLocaleDate));
 			break;
-		case QMetaType::QFont:
+		case QVariant::Font:
 			mime->setText(data.value<QFont>().toString());
 			break;
-		case QMetaType::QImage:
+		case QVariant::Image:
 			mime->setImageData(data.value<QImage>());
 			break;
-		case QMetaType::QPixmap:
+		case QVariant::Pixmap:
 			mime->setImageData(data.value<QPixmap>());
 			break;
-		case QMetaType::QBitmap:
+		case QVariant::Bitmap:
 			mime->setImageData(data.value<QBitmap>());
+			break;
+		case QVariant::Uuid:
+			mime->setImageData(data.toUuid().toString());
 			break;
 	}
 	
@@ -199,11 +186,11 @@ void Clip::setPixmap(const QPixmap& pixmap) {
 
 /* GETTER & SETTER */
 
-QMap<uint, QVariant>* Clip::getHistory() {
+QMap<qint64, QVariant>*Clip::getHistory() {
 	return &history;
 }
 
-void Clip::setHistory(const QMap<uint, QVariant>& value) {
+void Clip::setHistory(const QMap<qint64, QVariant>& value) {
 	history = value;
 }
 
@@ -214,7 +201,7 @@ void Clip::onModeChanged(QClipboard::Mode mode) {
 }
 
 void Clip::onDataChanged() {
-	uint index = QDateTime::currentDateTime().toTime_t();
+	qint64 index = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	
 	const QMimeData* data = clipboard->mimeData();
 	emit dataChanged(data);

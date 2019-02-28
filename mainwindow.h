@@ -20,6 +20,9 @@
 #include <QImageWriter>
 #include <QMetaEnum>
 
+#include "edittextclipboard.h"
+#include "editimageclipboard.h"
+#include "editcolorclipboard.h"
 #include "clip.h"
 #include "r.h"
 
@@ -41,38 +44,6 @@ public:
 	~MainWindow();
 	
 	void showEvent(QShowEvent*);
-	
-	/**
-	 * Edit the clipboard content by creating a temporary file containing the clipboard data,
-	 * open the default application associated with the given file extension, and then load
-	 * again the file and apply the data to the clipboard.
-	 * 
-	 * This is an example of the method call using lambda functions:
-	 * @code{.cpp}
-	 * editClipboard(".txt",
-	 * 	[this](QFile* f) {
-	 * 		// Write
-	 * 		f->write(clip->getText().toUtf8());
-	 * 		return true;
-	 * 	},
-	 * 	[this](QFile* f) {
-	 * 		// Read
-	 * 		clip->setText(f->readAll());
-	 * 		return true;
-	 * 	}
-	 * );
-	 * @endcode
-	 * @param fileExtension The file extension that can open the corresponding application.
-	 * @param write Function that write the clipboard content in the given `QFile`. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
-	 * @param read Function that read the given `QFile` content to the clipboard. This file object is already instanciated and open. Please do not close the file inside this function. Returns `true` by default, `false` if there is an exception and the method `editClipboard()` must stop right after the execution of `write()`.
-	 * @param writeFlags Specify the flags to open the temporary file for the writing process. By default, it is open with `QIODevice::WriteOnly | QIODevice::Text`.
-	 * @param readFlags Specify the flags to open the temporary file for the reading process. By default, it is open with `QIODevice::ReadOnly | QIODevice::Text`.
-	 */
-	void editClipboard(QString fileExtension,
-					   std::function<bool(QFile*)> write,
-					   std::function<bool(QFile*)> read,
-					   QIODevice::OpenMode writeFlags = QIODevice::WriteOnly | QIODevice::Text,
-					   QIODevice::OpenMode readFlags = QIODevice::ReadOnly | QIODevice::Text);
 	
 private slots:
 	/**
