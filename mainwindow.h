@@ -130,7 +130,7 @@ private:
 	QAction* actionCopyColor = nullptr;
 	QAction* actionCopyImage = nullptr;
 	QAction* actionPrintHistoryMap = nullptr;
-	QMimeData* data = nullptr;
+	QMimeData data;
 	QTimer* timer = nullptr;
 #endif
 };

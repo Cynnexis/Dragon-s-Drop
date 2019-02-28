@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 	clip = Clip::getInstance(this);
-	data = new QMimeData();
 	
 	connect(clip, SIGNAL(dataChanged(const QMimeData*)), this, SLOT(onDataChanged(const QMimeData*)));
 	connect(clip, SIGNAL(textReceived(QString)), this, SLOT(onTextReceived(QString)));
@@ -254,7 +253,7 @@ void MainWindow::on_actionAbout_Qt_triggered() {
 
 #ifdef QT_DEBUG
 void MainWindow::actionCopyText_triggered() {
-	data->clear();
+	data.clear();
 	clip->setText("This is a text");
 	cout << "MainWindow::actionCopyText_triggered> Text saved" << endl;
 }
@@ -265,24 +264,24 @@ void MainWindow::actionCopyHtml_triggered() {
 						   "<!--StartFragment--><span style=\"color: rgb(84, 84, 84); font-family: arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\">Hello world</span><!--EndFragment-->\n"
 						   "</body>\n"
 						   "</html>");
-	data->clear();
-	data->setData("text/html", html.toUtf8());
-	clip->setMimeType(data);
+	data.clear();
+	data.setData("text/html", html.toUtf8());
+	clip->setMimeType(&data);
 	cout << "MainWindow::actionCopyHtml_triggered> Html saved" << endl;
 }
 
 void MainWindow::actionCopyUrl_triggered() {
-	data->clear();
-	data->setText("https://www.google.com");
-	data->setData("text/uri-list", QString("https://www.google.com").toUtf8());
-	clip->setMimeType(data);
+	data.clear();
+	data.setText("https://www.google.com");
+	data.setData("text/uri-list", QString("https://www.google.com").toUtf8());
+	clip->setMimeType(&data);
 	cout << "MainWindow::actionCopyUrl_triggered> Url saved" << endl;
 }
 
 void MainWindow::actionCopyColor_triggered() {
-	data->clear();
-	data->setText("#3e85cf");
-	clip->setMimeType(data);
+	data.clear();
+	data.setText("#3e85cf");
+	clip->setMimeType(&data);
 	cout << "MainWindow::actionCopyColor_triggered> Color saved" << endl;
 }
 
@@ -293,18 +292,17 @@ void MainWindow::actionCopyImage_triggered() {
 	painter.fillRect(image.rect(), Qt::white);
 	painter.drawText(image.rect(), Qt::AlignCenter | Qt::AlignVCenter, "Hello world!");
 	painter.end();
-	image.save("image.png");
-	data->clear();
-	data->setImageData(image);
-	clip->setMimeType(data);
+	data.clear();
+	data.setImageData(image);
+	clip->setMimeType(&data);
 	cout << "MainWindow::actionCopyImage_triggered> Image saved" << endl;
 }
 
 void MainWindow::actionPrintHistoryMap_triggered() {
 	cout << endl;
 	
-	for (uint key : clip->getHistory()->keys()) {
-		cout << QDateTime::fromTime_t(key).toString(getDateTimeFormat()).toStdString() << " (" << key << ")\t->\t";
+	for (qint64 key : clip->getHistory()->keys()) {
+		cout << QDateTime::fromMSecsSinceEpoch(key).toString(getDateTimeFormat()).toStdString() << " (" << key << ")\t->\t";
 		QVariant v = clip->getHistory()->value(key, QVariant(""));
 		if (v.isValid() && v.type() == QVariant::Type::String)
 			cout << "'" << v.toString().toStdString() << "'";

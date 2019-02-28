@@ -45,6 +45,8 @@ QVariant Clip::mimeDataToVariant(const QMimeData& data) {
 		variant = data.text();
 	else if (data.hasImage())
 		variant = data.imageData().value<QImage>();
+	
+	return variant;
 }
 
 QMimeData*Clip::variantToMimeData(const QVariant& data) {
@@ -55,8 +57,6 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 	
 	// See https://doc.qt.io/qt-5/qmetatype.html#Type-enum
 	switch (data.type()) {
-		default:
-			return nullptr;
 		case QVariant::Bool:
 			mime->setText(data.toBool() ? "true" : "false");
 			break;
@@ -133,6 +133,8 @@ QMimeData*Clip::variantToMimeData(const QVariant& data) {
 		case QVariant::Uuid:
 			mime->setImageData(data.toUuid().toString());
 			break;
+		default:
+			return nullptr;
 	}
 	
 	return mime;

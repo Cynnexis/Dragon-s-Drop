@@ -4,6 +4,9 @@ EditClipboard::EditClipboard(QWidget* parent) : QObject (parent) {
 	clip = Clip::getInstance(parent);
 }
 
+EditClipboard::~EditClipboard() {
+}
+
 void EditClipboard::edit(QString fileExtension) {
 	// See https://doc.qt.io/qt-5/qtemporarydir.html
     //QTemporaryFile f(R::getTemporaryFileTemplate("txt"));
